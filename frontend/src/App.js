@@ -1,10 +1,10 @@
 import React from 'react';
-import HelloWorld from './HelloWorld';
+import LoginForm from './Login/LoginScreen';
 
 function App() {
 	return (
 		<div>
-			<HelloWorld />
+			<LoginForm />
 		</div>
 	);
 }
