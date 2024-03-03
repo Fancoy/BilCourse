@@ -18,6 +18,7 @@
   .dark-mode {
     background-color: var(--background-color-dark1);
     color: var(--text-color-dark);
+    height: 100vh;
   }
   
   form {
