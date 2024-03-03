@@ -69,4 +69,18 @@
   .dark-mode input[type="submit"]:hover {
     background-color: #043001;
   }
+
+  button {
+    background-color: #4caf50;
+    color: white;
+    padding: 14px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+  }
+
+  .dark-mode button {
+    background-color: #074802;
+  }
   
