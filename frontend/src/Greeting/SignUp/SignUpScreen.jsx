@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import './LoginScreen.css'; // Import the CSS file
+import './SignUpScreen.css'; // Import the CSS file
 import DarkModeIcon from '@mui/icons-material/DarkMode';
 import DarkModeOutlinedIcon from '@mui/icons-material/DarkModeOutlined';
 
-export default function LoginForm() {
+export default function SignUpForm() {
   const { register, handleSubmit, formState: { errors } } = useForm();
   const onSubmit = data => console.log(data);
   const [darkMode, setDarkMode] = useState(false); // State to track dark mode
