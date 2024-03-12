@@ -4,9 +4,15 @@ import './SignUpScreen.css'; // Import the CSS file
 import { Modal } from "@mui/material";
 
 export default function SignUpForm({isOpen, onClose, darkMode}) {
-  const { register, handleSubmit, formState: { errors } } = useForm();
+  const { register, handleSubmit, formState: { errors, isSubmitting }, getValues } = useForm();
   const onSubmit = data => console.log(data);
 
+  //Check if passwords match
+  const validatePasswordMatch = value => {
+    const { password, confirmPassword } = getValues();
+    return password === confirmPassword || "Passwords do not match";
+  };
+  
   return (
       <Modal open={isOpen} onClose={onClose}>
         <div className={darkMode ? 'dark-mode' : ''}>
@@ -19,6 +25,12 @@ export default function SignUpForm({isOpen, onClose, darkMode}) {
 
             <input type="text" placeholder="Email" {...register("email", { required: true, pattern: /^\S+@\S+$/i })} />
             {errors.email && <span>Enter a valid email address</span>}
+            
+            <input type="password" placeholder="Password" {...register("password", { required: true })} />
+            {errors.password && <span>Password is required</span>}
+
+            <input type="password" placeholder="Re-enter Password" {...register("confirmPassword", { required: true, validate: validatePasswordMatch })} />
+            {errors.confirmPassword && <span>{errors.confirmPassword.message}</span>}
 
             <input type="tel" placeholder="Mobile number" {...register("mobileNumber", { required: true, minLength: 10, maxLength: 10 })} />
             {errors.mobileNumber && <span>Enter a valid 10-digit mobile number</span>}
