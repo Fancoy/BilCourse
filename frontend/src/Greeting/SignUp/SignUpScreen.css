@@ -96,3 +96,7 @@
   .dark-mode button {
     background-color: #074802;
   }
+
+ .dark-mode span {
+   color: #fff; /*changed text color to white in dark mode */
+ }
