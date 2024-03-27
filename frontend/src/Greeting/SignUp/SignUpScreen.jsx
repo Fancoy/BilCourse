@@ -5,7 +5,10 @@ import { Modal } from "@mui/material";
 
 export default function SignUpForm({isOpen, onClose, darkMode}) {
   const { register, handleSubmit, formState: { errors, isSubmitting }, getValues } = useForm();
-  const onSubmit = data => console.log(data);
+  const onSubmit = data => {
+    console.log(data);
+    onClose();
+  }
 
   //Check if passwords match
   const validatePasswordMatch = value => {

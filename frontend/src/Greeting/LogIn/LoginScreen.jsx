@@ -5,7 +5,10 @@ import { Modal, Box } from "@mui/material";
 
 export default function LogInForm({isOpen, onClose, darkMode}) {
   const { register, handleSubmit, formState: { errors } } = useForm();
-  const onSubmit = data => console.log(data);
+  const onSubmit = data => {
+    console.log(data);
+    onClose();
+  }
   
   return (
     <Modal 
