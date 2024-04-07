@@ -1,0 +1,76 @@
+/* Reset some basic elements to ensure consistency across browsers */
+html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+}
+
+/* Styling for the main container */
+.home {
+    display: flex;
+    flex-direction: column;
+    width: 100%; /* Adjust this if you want a specific width */
+    margin: auto;
+    padding: 20px;
+    height: 100vh; /* Ensure it takes the full viewport height */
+    overflow: hidden; /* Prevent scrolling within this container */
+}
+
+
+/* Header stays at the top */
+h2 {
+    margin: 0 0 20px 0; /* Add some margin below the header */
+}
+
+/* Container for the courses list, allowing it to scroll */
+.courses-container {
+    overflow-y: auto; /* Enable vertical scrolling */
+    flex-grow: 1; /* Allow it to fill the space */
+}
+
+
+/* Individual course styling */
+.course {
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    padding: 20px;
+    margin-bottom: 20px; /* Space between courses */
+    border-radius: 8px;
+}
+
+/* Course heading */
+.course h3 {
+    color: #333;
+    margin: 0 0 10px 0;
+}
+
+/* Course paragraph */
+.course p {
+    color: #666;
+    margin: 0 0 10px 0;
+}
+
+/* Buttons for actions like editing and deleting courses */
+button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-right: 10px; /* Space between buttons */
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+/* Button for deletion might have a different color */
+.delete-button {
+    background-color: #ff4757;
+}
+
+.delete-button:hover {
+    background-color: #ff6b81;
+}
