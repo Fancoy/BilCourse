@@ -13,11 +13,39 @@ function Home() {
     const [editCourseId, setEditCourseId] = useState(null);
 
     const [userRole, setUserRole] = useState('');
+    const [availableCourses, setAvailableCourses] = useState([]); // Added for available courses
+    const [taEmail, setTaEmail] = useState('');
+    
+
+    const assignTA = (courseId) => {
+        api.post(`/api/courses/${courseId}/assign-ta/`, { email: taEmail })
+            .then(res => {
+                alert('TA assigned successfully!');
+                setTaEmail(''); // Clear the input field after successful assignment
+            })
+            .catch(err => {
+                alert('Failed to assign TA.');
+                console.error(err);
+            });
+    };
+
+    const leaveCourse = (courseId) => {
+        api.post(`/api/courses/leave/${courseId}/`)
+            .then((res) => {
+                alert('Left the course successfully!');
+                getCourses();
+                getAvailableCourses();
+            })
+            .catch((error) => alert(error));
+    };
 
     useEffect(() => {
         getCourses();
         fetchUserRole();
-    }, []);
+        if (userRole === 'student') { // Fetch available courses if the user is a student
+            getAvailableCourses();
+        }
+    }, [userRole]); // Added userRole as a dependency to re-fetch when it's updated
 
     const fetchUserRole = () => {
         // Assuming '/api/user/account-type/' is your endpoint for fetching user role
@@ -37,6 +65,30 @@ function Home() {
                 console.log(data);
             })
             .catch((err) => alert(err));
+    };
+
+    const getAvailableCourses = () => {
+        // Fetch available courses where enrolled students are less than capacity
+        api.get("/api/courses/available/") // Assuming this is your endpoint for available courses
+            .then((res) => {
+                setAvailableCourses(res.data.available_courses); // Adjust based on your actual response structure
+            })
+            .catch((err) => console.error('Failed to fetch available courses:', err));
+    };
+
+    const enrollInCourse = (courseId) => {
+        // Function to enroll the current user in a course
+        api.post(`/api/courses/enroll/${courseId}/`)
+            .then((res) => {
+                if (res.status === 200) {
+                    alert('Enrolled in course successfully!');
+                    getAvailableCourses(); // Refresh the available courses list
+                    getCourses(); // Refresh the main courses list to include the newly enrolled course 
+                } else {
+                    alert('Failed to enroll in course.');
+                }
+            })
+            .catch((error) => alert(error));
     };
 
     const deleteCourse = (id) => {
@@ -108,13 +160,27 @@ function Home() {
 
     return (
         <div className="home">
-            <h2>Courses</h2>
+            <h2>My Courses</h2>
             <div className="courses-container">
                 {courses.map((course) => (
                     <div key={course.id}>
                         <Course course={course} />
-                        <button onClick={() => startEditing(course)}>Edit</button> {/* Edit Button */}
-                        <button onClick={() => deleteCourse(course.id)}>Delete</button> {/* Delete Button */}
+                        {userRole === 'instructor' && (
+                            <>
+                                <button onClick={() => startEditing(course)}>Edit</button>
+                                <button onClick={() => deleteCourse(course.id)}>Delete</button>
+                                <input 
+                                    type="email" 
+                                    placeholder="Assign TA by email" 
+                                    value={taEmail} 
+                                    onChange={(e) => setTaEmail(e.target.value)} 
+                                />
+                                <button onClick={() => assignTA(course.id)}>Assign TA</button>
+                            </>
+                        )}
+                        {userRole === 'student' && (
+                            <button onClick={() => leaveCourse(course.id)}>Leave Course</button>
+                        )}    
                     </div>
                 ))}
             </div>
@@ -202,6 +268,20 @@ function Home() {
                     </div>
                 ) 
             ) : null}
+            {/* Your existing JSX for courses */}
+            {userRole === 'student' && ( // Conditional rendering for students
+                <div>
+                    <h2>Available Courses</h2>
+                    <div className="courses-container">
+                        {availableCourses.map((course) => (
+                            <div key={course.id}>
+                                <Course course={course} /> {/* Assuming you have a Course component */}
+                                <button onClick={() => enrollInCourse(course.id)}>Enroll</button>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            )}
         </div>
     );    
 }
