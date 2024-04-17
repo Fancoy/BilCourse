@@ -1,15 +1,32 @@
 from django.shortcuts import render
-from .models import User, Course  # Make sure to import your custom User model
+from .models import User, Course, Forum  # Make sure to import your custom User model
 from rest_framework import generics
-from .serializers import UserSerializer, CourseSerializer, UserAccountTypeSerializer
+from .serializers import UserSerializer, CourseSerializer, UserAccountTypeSerializer, ForumSerializer
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from django.db.models import Q
 from rest_framework.exceptions import PermissionDenied
-from rest_framework.generics import UpdateAPIView
+from rest_framework.generics import UpdateAPIView, CreateAPIView
 from django.shortcuts import get_object_or_404
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.db.models import Count, F
+
+class CreateForum(CreateAPIView):
+    queryset = Forum.objects.all()
+    serializer_class = ForumSerializer
+    permission_classes = [IsAuthenticated]
+
+    def perform_create(self, serializer):
+        # Get the course from the serializer's validated data
+        course_id = serializer.validated_data.get('course').id
+        course = get_object_or_404(Course, id=course_id)
+
+        # Check if the current user is the instructor of the course
+        if self.request.user == course.instructor:
+            serializer.save()
+        else:
+            # If not the instructor, raise a permission denied response
+            raise PermissionDenied("You are not authorized to create a forum for this course.")
 
 class AssignTA(APIView):
     permission_classes = [IsAuthenticated]
