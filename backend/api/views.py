@@ -1,7 +1,7 @@
 from django.shortcuts import render
-from .models import User, Course, Forum  # Make sure to import your custom User model
+from .models import User, Course, Forum, Badge  # Make sure to import your custom User model
 from rest_framework import generics
-from .serializers import UserSerializer, CourseSerializer, UserAccountTypeSerializer, ForumSerializer
+from .serializers import UserSerializer, CourseSerializer, UserAccountTypeSerializer, ForumSerializer, BadgeSerializer
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from django.db.models import Q
 from rest_framework.exceptions import PermissionDenied
@@ -10,6 +10,29 @@ from django.shortcuts import get_object_or_404
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.db.models import Count, F
+
+def award_heavy_load_badge(user):
+    courses_taken = Course.objects.filter(students=user).count()
+    heavy_loader_badge, created = Badge.objects.get_or_create(name="Heavy Loader", description="Awarded to students who have taken more than 4 courses.")
+    print(f"User {user.email} has taken {courses_taken} courses.")
+    if courses_taken > 4:
+        heavy_loader_badge.users.add(user)
+
+class UserProfileView(APIView):
+    def get(self, request, format=None):
+        user = request.user
+        user_data = UserSerializer(user).data
+        user_courses = CourseSerializer(Course.objects.filter(students=user), many=True).data
+        user_assisting = CourseSerializer(Course.objects.filter(assistants=user), many=True).data
+        user_teaching = CourseSerializer(Course.objects.filter(instructor=user), many=True).data
+        user_badges = BadgeSerializer(user.badges.all(), many=True).data
+        return Response({
+            'user': user_data,
+            'courses': user_courses,
+            'teaching': user_teaching,
+            'assisting': user_assisting,
+            'badges': user_badges
+        })
 
 class CreateForum(CreateAPIView):
     queryset = Forum.objects.all()
@@ -90,6 +113,7 @@ class EnrollStudent(APIView):
         
         course.students.add(user)
         course.save()
+        award_heavy_load_badge(user)
         return Response({'success': f'{user.email} has been enrolled in {course.title}.'})
 
 class AvailableCourses(generics.ListAPIView):
