@@ -18,7 +18,7 @@ function Home() {
     
 
     const assignTA = (courseId) => {
-        api.post(`/api/courses/${courseId}/assign-ta/`, { email: taEmail })
+        api.post(`/api/courses/${courseId}/assign-ta`, { email: taEmail })
             .then(res => {
                 alert('TA assigned successfully!');
                 setTaEmail(''); // Clear the input field after successful assignment
@@ -30,7 +30,7 @@ function Home() {
     };
 
     const leaveCourse = (courseId) => {
-        api.post(`/api/courses/leave/${courseId}/`)
+        api.post(`/api/courses/${courseId}/leave`)
             .then((res) => {
                 alert('Left the course successfully!');
                 getCourses();
@@ -58,7 +58,7 @@ function Home() {
 
     const getCourses = () => {
         api
-            .get("/api/courses/")
+            .get("/api/courses")
             .then((res) => res.data)
             .then((data) => {
                 setCourses(data);
@@ -69,7 +69,7 @@ function Home() {
 
     const getAvailableCourses = () => {
         // Fetch available courses where enrolled students are less than capacity
-        api.get("/api/courses/available/") // Assuming this is your endpoint for available courses
+        api.get("/api/courses/available") // Assuming this is your endpoint for available courses
             .then((res) => {
                 setAvailableCourses(res.data.available_courses); // Adjust based on your actual response structure
             })
@@ -78,7 +78,7 @@ function Home() {
 
     const enrollInCourse = (courseId) => {
         // Function to enroll the current user in a course
-        api.post(`/api/courses/enroll/${courseId}/`)
+        api.post(`/api/courses/${courseId}/enroll`)
             .then((res) => {
                 if (res.status === 200) {
                     alert('Enrolled in course successfully!');
@@ -93,7 +93,7 @@ function Home() {
 
     const deleteCourse = (id) => {
         api
-            .delete(`/api/courses/delete/${id}/`)
+            .delete(`/api/courses/${id}`)
             .then((res) => {
                 if (res.status === 204) alert("Course deleted!");
                 else alert("Failed to delete course.");
@@ -148,7 +148,7 @@ function Home() {
     const updateCourse = (e) => {
         e.preventDefault();
         api
-            .patch(`/api/courses/edit/${editCourseId}/`, { title, description, capacity })
+            .patch(`/api/courses/${editCourseId}`, { title, description, capacity })
             .then((res) => {
                 alert("Course updated!");
                 stopEditing();

@@ -32,10 +32,12 @@ ALLOWED_HOSTS = config("ALLOWED_HOSTS", default=[], cast=str).split(" ")
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (
         "rest_framework_simplejwt.authentication.JWTAuthentication",
+        'rest_framework.authentication.BasicAuthentication',
     ),
     "DEFAULT_PERMISSION_CLASSES": [
         "rest_framework.permissions.IsAuthenticated",
     ],
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
 }
 
 SIMPLE_JWT = {
@@ -60,6 +62,7 @@ INSTALLED_APPS = [
     # Third Party Apps
     'rest_framework',
     'corsheaders',
+    'drf_spectacular',
 
 ]
 
@@ -156,3 +159,9 @@ CORS_ALLOWS_CREDENTIALS = True
 
 # adding the custom user model
 AUTH_USER_MODEL = "api.User"
+SPECTACULAR_SETTINGS = {
+    "SWAGGER_UI_SETTINGS": {
+        'filter': True,
+        "persistAuthorization": True,  # remember me
+    }
+}
