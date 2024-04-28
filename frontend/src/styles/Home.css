@@ -10,7 +10,7 @@ html, body {
 .home {
     display: flex;
     flex-direction: column;
-    width: 100%; /* Adjust this if you want a specific width */
+    width: 90%; /* Adjust this if you want a specific width */
     margin: auto;
     padding: 20px;
     height: 100vh; /* Ensure it takes the full viewport height */
