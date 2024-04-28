@@ -1,0 +1,18 @@
+.sidebar {
+    flex: 0.3;
+    box-sizing: border-box;
+    z-index: 1000 !important;
+    border-right: 1px solid #e6ecf0 !important;
+    width: auto;
+    height: 100vh;
+    padding-left: 20px;
+    padding-right: 30px;
+    padding-top: 30px;
+  }
+  
+  .logo__component {
+    float: right;
+    max-width: 100px;
+    max-height: 100px;
+    margin-top: 280px;
+  }

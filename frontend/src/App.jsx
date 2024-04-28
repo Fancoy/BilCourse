@@ -2,9 +2,10 @@ import react from "react"
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom"
 import Login from "./pages/Login"
 import Register from "./pages/Register"
-import Home from "./pages/Home"
+import MainPage from "./pages/MainPage"
 import NotFound from "./pages/NotFound"
 import ProtectedRoute from "./components/ProtectedRoute"
+import CreateCourse from "./pages/CreateCourse"
 
 function Logout() {
   localStorage.clear()
@@ -21,10 +22,10 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route
-          path="/"
+          path="/home"
           element={
             <ProtectedRoute>
-              <Home />
+              <MainPage />
             </ProtectedRoute>
           }
         />
@@ -32,6 +33,8 @@ function App() {
         <Route path="/logout" element={<Logout />} />
         <Route path="/register" element={<RegisterAndLogout />} />
         <Route path="*" element={<NotFound />}></Route>
+        <Route path="/createcourse" element={<CreateCourse />} />
+
       </Routes>
     </BrowserRouter>
   )
