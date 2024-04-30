@@ -1,7 +1,6 @@
 from rest_framework import viewsets, exceptions, mixins
 from api import models, serializers
 
-
 class ForumViewSet(mixins.RetrieveModelMixin,
                    mixins.UpdateModelMixin,
                    mixins.DestroyModelMixin,

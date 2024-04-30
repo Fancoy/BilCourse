@@ -67,7 +67,6 @@ class CourseModelViewSet(viewsets.ModelViewSet):
             queryset =  models.Course.objects.filter(instructor=request.user)
         elif request.user.account_type == get_user_model().STUDENT:
             queryset=  models.Course.objects.filter(Q(students=request.user) | Q(assistants=request.user))
-        
 
         page = self.paginate_queryset(queryset)
         if page is not None:

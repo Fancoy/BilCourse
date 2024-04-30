@@ -2,6 +2,27 @@ from rest_framework import serializers
 from api import models
 from django.contrib.auth import get_user_model
 
+class AssignmentCreateSerializer(serializers.ModelSerializer):
+    course = serializers.SlugRelatedField(slug_field='slug', queryset=models.Course.objects.all())
+    class Meta:
+        model = models.Assignment
+        fields = '__all__'
+
+class AssignmentRetrieveSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Assignment
+        fields = '__all__'
+
+class AssignmentListSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Assignment
+        fields = '__all__'
+
+class AssignmentUpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Assignment
+        fields = '__all__'
+
 class AssignmentSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Assignment

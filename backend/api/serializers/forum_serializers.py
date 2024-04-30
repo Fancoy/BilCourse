@@ -8,8 +8,6 @@ class ForumCreateSerializer(serializers.ModelSerializer):
         exclude = ('forum_messages',)
 
 class ForumRetrieveSerializer(serializers.ModelSerializer):
-
-    
     class Meta:
         model = models.Forum
         fields = '__all__'

@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.utils.translation import gettext_lazy as _
-from .models import User, Course  # Import your custom user model
+from api import models  # Import your custom user model
 
 class UserAdmin(BaseUserAdmin):
     # Define custom display columns in the admin list view
@@ -29,6 +29,10 @@ class CourseAdmin(admin.ModelAdmin):
     list_display = ('title', 'instructor', 'created_at', 'capacity')  # Customize as needed
     search_fields = ('title', 'description', 'instructor__email')  # Adjust according to your needs
 
+@admin.register(models.Assignment)
+class AssignmentAdmin(admin.ModelAdmin):
+    pass
+
 # Register your models here
-admin.site.register(User, UserAdmin)  # This line is already there for the User model
-admin.site.register(Course, CourseAdmin)  # Add this line to register Course with the CourseAdmin options
+admin.site.register(models.User, UserAdmin)  # This line is already there for the User model
+admin.site.register(models.Course, CourseAdmin)  # Add this line to register Course with the CourseAdmin options

@@ -1,8 +1,10 @@
+from django.conf import settings
 from django.contrib import admin
 from django.urls import include, path
 from api.views import CreateUserView, UserAccountTypeView
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from drf_spectacular import views as spectacular_views
+from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -21,3 +23,8 @@ urlpatterns = [
     path('docs/', spectacular_views.SpectacularSwaggerView.as_view(url_name='schema'),
          name='swagger-ui'),
 ]
+
+if not settings.DEBUG:
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+else:
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATICFILES_DIRS)
