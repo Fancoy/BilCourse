@@ -13,7 +13,7 @@ urlpatterns = [
     path("api/token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
     path("api-auth/", include("rest_framework.urls")),
     path('api/profile/', UserProfileView.as_view(), name='user-profile'),
-    path("api/", include("api.urls"))  # Include the urls from the api app
+    path("api/", include("api.urls")),  # Include the urls from the api app
 
     # Add a catch-all pattern
     re_path(r'^.*$', TemplateView.as_view(template_name='index.html'), name='home'), 
