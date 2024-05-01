@@ -29,7 +29,7 @@ function Form({ route, method }) {
             if (isLogin) {
                 localStorage.setItem(ACCESS_TOKEN, res.data.access);
                 localStorage.setItem(REFRESH_TOKEN, res.data.refresh);
-                navigate("/");
+                navigate("/home");
             } else {
                 navigate("/login");
             }

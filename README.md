@@ -50,6 +50,7 @@ Follow these steps to set up and run the project on your local machine.
    ```
    cd path/to/frontend
    npm install
+   npm install @mui/material @emotion/react @emotion/styled @mui/icons-material
    ```
 
 7. **Create and configure the .env file:**
