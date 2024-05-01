@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import User, Course, Forum, ForumMessage  # Make sure to import your custom User model
+from .models import User, Course, Forum, ForumMessage, Badge  # Make sure to import your custom User model
 
 class ForumMessageSerializer(serializers.ModelSerializer):
     class Meta:
@@ -8,6 +8,11 @@ class ForumMessageSerializer(serializers.ModelSerializer):
     
     def create(self, validated_data):
         return ForumMessage.objects.create(**validated_data)
+
+class BadgeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Badge
+        fields = '__all__'
 
 class ForumSerializer(serializers.ModelSerializer):
     class Meta:

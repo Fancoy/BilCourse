@@ -1,0 +1,59 @@
+/* Profile.css */
+.profile-container {
+    max-width: 800px;
+    margin: auto;
+    padding: 20px;
+    background: #f4f4f4;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.profile-container h1 {
+    color: #333;
+    border-bottom: 2px solid #666;
+    padding-bottom: 10px;
+}
+
+.profile-details, .profile-courses, .profile-teaching, .profile-badges {
+    margin-top: 20px;
+    padding: 15px;
+    background: #fff;
+    border-radius: 5px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.profile-details h2, .profile-courses h2, .profile-teaching h2, .profile-badges h2 {
+    color: #444;
+    margin-bottom: 10px;
+}
+
+.profile-details p, .profile-courses div, .profile-teaching div, .profile-badges div {
+    margin-left: 20px;
+    color: #666;
+}
+
+.course-item, .teaching-item, .badge-item {
+    padding: 10px;
+    margin-bottom: 10px;
+    border-left: 3px solid #007BFF;
+    background-color: #e7f1ff;
+}
+
+.course-item p, .teaching-item p, .badge-item p {
+    margin: 0;
+    color: #333;
+}
+
+.back-button {
+    padding: 10px 20px;
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-bottom: 20px;
+}
+
+.back-button:hover {
+    background-color: #0056b3;
+}

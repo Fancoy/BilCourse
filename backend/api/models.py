@@ -2,6 +2,23 @@ from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, Permis
 from django.db import models
 from django.utils import timezone
 from django.core.validators import MinValueValidator
+from django.db.models.signals import m2m_changed
+from django.dispatch import receiver
+
+class Badge(models.Model):
+    name = models.CharField(max_length=100)
+    description = models.TextField()
+    users = models.ManyToManyField('User', related_name='badges')
+    user_count = models.PositiveIntegerField(default=0)
+
+    def __str__(self):
+        return self.name
+
+@receiver(m2m_changed, sender=Badge.users.through)
+def update_user_count(sender, instance, action, **kwargs):
+    if action == "post_add" or action == "post_remove":
+        instance.user_count = instance.users.count()
+        instance.save()
 
 class ForumMessage(models.Model):
     sender = models.ForeignKey('User', on_delete=models.CASCADE, related_name='sent_messages')
