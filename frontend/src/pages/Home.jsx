@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import api from "../api";
 import Course from "../components/Course"; // Make sure you have a Course component
 import "../styles/Home.css";
+import { useNavigate } from 'react-router-dom'; // Import useNavigate
 
 function Home() {
     const [courses, setCourses] = useState([]);
@@ -16,6 +17,7 @@ function Home() {
     const [availableCourses, setAvailableCourses] = useState([]); // Added for available courses
     const [taEmail, setTaEmail] = useState('');
     
+    const navigate = useNavigate(); // Initialize useNavigate for navigation
 
     const assignTA = (courseId) => {
         api.post(`/api/courses/${courseId}/assign-ta/`, { email: taEmail })
@@ -134,6 +136,8 @@ function Home() {
     return (
         <div className="home">
             <h2>My Courses</h2>
+            <button onClick={() => navigate('/profile')} className="back-button">Profile</button>
+            <button onClick={() => navigate('/logout')} className="back-button">Logout</button>
             <div className="courses-container">
                 {courses.map((course) => (
                     <div key={course.id}>
