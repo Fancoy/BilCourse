@@ -7,6 +7,7 @@ import BookmarkIcon from "@mui/icons-material/Bookmark";
 import HomeIcon from "@mui/icons-material/Home";
 import AddIcon from '@mui/icons-material/Add';
 import EventIcon from '@mui/icons-material/Event';
+import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import { useState, useEffect } from "react";
 import api from "../api";
 import "./css/Sidebar.css";
@@ -66,11 +67,15 @@ function Sidebar() {
       <SideBarOption text="Calender" Icon={EventIcon} />
 
 
+
       {/* Instructor Options */}
       {userRole === 'instructor' && (
         <SideBarOption text="Create Course" Icon={AddIcon} />
         )
     }
+        <div className="sidebar__logout">
+          <SideBarOption text="Logout" Icon={ExitToAppIcon} />
+        </div>
       {/*<div className="logo__component">
         <img
             src={Logo}

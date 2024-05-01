@@ -9,6 +9,10 @@
     padding-right: 30px;
     padding-top: 30px;
   }
+
+  .sidebar__logout {
+    margin-top: 70%;
+  }
   
   .logo__component {
     float: right;

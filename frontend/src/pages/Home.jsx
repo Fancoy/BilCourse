@@ -145,7 +145,7 @@ function Home() {
                                 <input 
                                     type="email" 
                                     placeholder="Assign TA by email" 
-                                    value={taEmail} 
+                                    value={taEmail}
                                     onChange={(e) => setTaEmail(e.target.value)} 
                                 />
                                 <button onClick={() => assignTA(course.id)}>Assign TA</button>
