@@ -18,6 +18,11 @@ function Home() {
     const [taEmail, setTaEmail] = useState('');
     
     const navigate = useNavigate(); // Initialize useNavigate for navigation
+    const [view, setView] = useState('myCourses'); // State to control which view to show
+
+    const handleViewChange = (newView) => {
+        setView(newView);
+    };
 
     const assignTA = (courseId) => {
         api.post(`/api/courses/${courseId}/assign-ta/`, { email: taEmail })
@@ -135,30 +140,41 @@ function Home() {
 
     return (
         <div className="home">
-            <h2>My Courses</h2>
-            <div className="courses-container">
-                {courses.map((course) => (
-                    <div key={course.id}>
-                        <Course course={course} />
-                        {userRole === 'instructor' && (
-                            <>
-                                <button onClick={() => startEditing(course)}>Edit</button>
-                                <button onClick={() => deleteCourse(course.id)}>Delete</button>
-                                <input 
-                                    type="email" 
-                                    placeholder="Assign TA by email" 
-                                    value={taEmail}
-                                    onChange={(e) => setTaEmail(e.target.value)} 
-                                />
-                                <button onClick={() => assignTA(course.id)}>Assign TA</button>
-                            </>
-                        )}
-                        {userRole === 'student' && (
-                            <button onClick={() => leaveCourse(course.id)}>Leave Course</button>
-                        )}
-                    </div>
-                ))}
+            {userRole === 'student' && (
+                <div className="view-buttons">
+                    <button onClick={() => handleViewChange('myCourses')}>My Courses</button>
+                    <button onClick={() => handleViewChange('availableCourses')}>Available Courses</button>
+                </div>     
+            )}
+            
+            {view === 'myCourses' && (
+            <div>
+                <h2>My Courses</h2>
+                <div className="courses-container">
+                    {courses.map((course) => (
+                        <div key={course.id}>
+                            <Course course={course} />
+                            {userRole === 'instructor' && (
+                                <>
+                                    <button onClick={() => startEditing(course)}>Edit</button>
+                                    <button onClick={() => deleteCourse(course.id)}>Delete</button>
+                                    <input 
+                                        type="email" 
+                                        placeholder="Assign TA by email" 
+                                        value={taEmail}
+                                        onChange={(e) => setTaEmail(e.target.value)} 
+                                    />
+                                    <button onClick={() => assignTA(course.id)}>Assign TA</button>
+                                </>
+                            )}
+                            {userRole === 'student' && (
+                                <button onClick={() => leaveCourse(course.id)}>Leave Course</button>
+                            )}
+                        </div>
+                    ))}
+                </div>
             </div>
+            )}
             {userRole === 'instructor' && isEditing && (
                 <div className="form-container">
                     <h2>Edit Course</h2>
@@ -201,8 +217,7 @@ function Home() {
                     </form>
                 </div>
             )}
-            {/* Your existing JSX for courses */}
-            {userRole === 'student' && ( // Conditional rendering for students
+            {view === 'availableCourses' && (
                 <div>
                     <h2>Available Courses</h2>
                     <div className="courses-container">
