@@ -27,8 +27,7 @@ h2 {
 
 /* Container for the courses list, allowing it to scroll */
 .courses-container {
-    overflow: auto; /* Allow it to scroll */
-    flex-grow: 1; /* Allow it to fill the space */
+    flex-grow: 1; /* Take the remaining space */
 }
 
 
@@ -85,4 +84,14 @@ button:hover {
     border-radius: 5px;
     cursor: pointer;
     margin-bottom: 20px;
+}
+
+.view-buttons {
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-bottom: 20px;
+    width: 100%;
+    margin-left: 70%;
 }
