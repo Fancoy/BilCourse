@@ -136,8 +136,6 @@ function Home() {
     return (
         <div className="home">
             <h2>My Courses</h2>
-            <button onClick={() => navigate('/profile')} className="back-button">Profile</button>
-            <button onClick={() => navigate('/logout')} className="back-button">Logout</button>
             <div className="courses-container">
                 {courses.map((course) => (
                     <div key={course.id}>
