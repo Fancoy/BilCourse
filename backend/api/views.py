@@ -11,6 +11,12 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.db.models import Count, F
 
+def index(request):
+    return render(request, "hey.html")
+
+def room(request, room_name):
+    return render(request, "room.html", {"room_name": room_name})
+
 def award_heavy_load_badge(user):
     courses_taken = Course.objects.filter(students=user).count()
     heavy_loader_badge, created = Badge.objects.get_or_create(name="Heavy Loader", description="Awarded to students who have taken more than 4 courses.")

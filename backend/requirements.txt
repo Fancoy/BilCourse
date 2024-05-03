@@ -9,3 +9,5 @@ sqlparse
 psycopg2-binary
 python-dotenv
 mysqlclient
+channels_redis
+channels[daphne]

@@ -16,5 +16,5 @@ urlpatterns = [
     path("api/", include("api.urls")),  # Include the urls from the api app
 
     # Add a catch-all pattern
-    re_path(r'^.*$', TemplateView.as_view(template_name='index.html'), name='home'), 
+    #re_path(r'^.*$', TemplateView.as_view(template_name='index.html'), name='home'), 
 ]
