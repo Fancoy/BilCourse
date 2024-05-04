@@ -10,11 +10,13 @@ html, body {
 .home {
     display: flex;
     flex-direction: column;
-    width: 100%; /* Adjust this if you want a specific width */
+    width: 90%; /* Adjust this if you want a specific width */
     margin: auto;
     padding: 20px;
     height: 100vh; /* Ensure it takes the full viewport height */
-    overflow: hidden; /* Prevent scrolling within this container */
+    overflow: auto;
+    max-height: 90vh; /* Limit the height to avoid taking the full viewport */
+
 }
 
 
@@ -25,8 +27,7 @@ h2 {
 
 /* Container for the courses list, allowing it to scroll */
 .courses-container {
-    overflow-y: auto; /* Enable vertical scrolling */
-    flex-grow: 1; /* Allow it to fill the space */
+    flex-grow: 1; /* Take the remaining space */
 }
 
 
@@ -73,4 +74,24 @@ button:hover {
 
 .delete-button:hover {
     background-color: #ff6b81;
+}
+
+.back-button {
+    padding: 10px 20px;
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-bottom: 20px;
+}
+
+.view-buttons {
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-bottom: 20px;
+    width: 100%;
+    margin-left: 70%;
 }

@@ -1,7 +1,8 @@
 from django.conf import settings
 from django.contrib import admin
-from django.urls import include, path
-from api.views import CreateUserView, UserAccountTypeView
+from django.urls import include, path, re_path
+from django.views.generic import TemplateView
+from api.views import CreateUserView, UserAccountTypeView, UserProfileView
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from drf_spectacular import views as spectacular_views
 from django.conf.urls.static import static
@@ -22,6 +23,11 @@ urlpatterns = [
          name='redoc'),
     path('docs/', spectacular_views.SpectacularSwaggerView.as_view(url_name='schema'),
          name='swagger-ui'),
+    path('api/profile/', UserProfileView.as_view(), name='user-profile'),
+    path("api/", include("api.urls")),  # Include the urls from the api app
+
+    # Add a catch-all pattern
+    #re_path(r'^.*$', TemplateView.as_view(template_name='index.html'), name='home'), 
 ]
 
 if not settings.DEBUG:

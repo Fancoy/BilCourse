@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import api from "../api";
 import Course from "../components/Course"; // Make sure you have a Course component
 import "../styles/Home.css";
+import { useNavigate } from 'react-router-dom'; // Import useNavigate
 
 function Home() {
     const [courses, setCourses] = useState([]);
@@ -16,6 +17,12 @@ function Home() {
     const [availableCourses, setAvailableCourses] = useState([]); // Added for available courses
     const [taEmail, setTaEmail] = useState('');
     
+    const navigate = useNavigate(); // Initialize useNavigate for navigation
+    const [view, setView] = useState('myCourses'); // State to control which view to show
+
+    const handleViewChange = (newView) => {
+        setView(newView);
+    };
 
     const assignTA = (courseId) => {
         api.post(`/api/courses/${courseId}/assign-ta`, { email: taEmail })
@@ -102,33 +109,6 @@ function Home() {
             .catch((error) => alert(error));
     };
 
-    const createCourse = (e) => {
-        e.preventDefault();
-        console.log(title, description, capacity);
-        api
-            .post("/api/courses", { title, description, capacity })
-            .then((res) => {
-                if (res.status === 201) alert("Course created!");
-                else alert("Failed to create course.");
-                getCourses();
-            })
-            .catch((err) => {
-                if (err.response) {
-                    // The request was made and the server responded with a status code
-                    // that falls out of the range of 2xx
-                    console.log(err.response.data);
-                    alert(JSON.stringify(err.response.data));
-                } else if (err.request) {
-                    // The request was made but no response was received
-                    console.log(err.request);
-                } else {
-                    // Something happened in setting up the request that triggered an Error
-                    console.log('Error', err.message);
-                }
-            });
-            //.catch((err) => alert(err));
-    };
-
     const startEditing = (course) => {
         setIsEditing(true);
         setEditCourseId(course.id);
@@ -160,116 +140,84 @@ function Home() {
 
     return (
         <div className="home">
-            <h2>My Courses</h2>
-            <div className="courses-container">
-                {courses.map((course) => (
-                    <div key={course.id}>
-                        <Course course={course} />
-                        {userRole === 'instructor' && (
-                            <>
-                                <button onClick={() => startEditing(course)}>Edit</button>
-                                <button onClick={() => deleteCourse(course.id)}>Delete</button>
-                                <input 
-                                    type="email" 
-                                    placeholder="Assign TA by email" 
-                                    value={taEmail} 
-                                    onChange={(e) => setTaEmail(e.target.value)} 
-                                />
-                                <button onClick={() => assignTA(course.id)}>Assign TA</button>
-                            </>
-                        )}
-                        {userRole === 'student' && (
-                            <button onClick={() => leaveCourse(course.id)}>Leave Course</button>
-                        )}    
-                    </div>
-                ))}
+            {userRole === 'student' && (
+                <div className="view-buttons">
+                    <button onClick={() => handleViewChange('myCourses')}>My Courses</button>
+                    <button onClick={() => handleViewChange('availableCourses')}>Available Courses</button>
+                </div>     
+            )}
+            
+            {view === 'myCourses' && (
+            <div>
+                <h2>My Courses</h2>
+                <div className="courses-container">
+                    {courses.map((course) => (
+                        <div key={course.id}>
+                            <Course course={course} />
+                            {userRole === 'instructor' && (
+                                <>
+                                    <button onClick={() => startEditing(course)}>Edit</button>
+                                    <button onClick={() => deleteCourse(course.id)}>Delete</button>
+                                    <input 
+                                        type="email" 
+                                        placeholder="Assign TA by email" 
+                                        value={taEmail}
+                                        onChange={(e) => setTaEmail(e.target.value)} 
+                                    />
+                                    <button onClick={() => assignTA(course.id)}>Assign TA</button>
+                                </>
+                            )}
+                            {userRole === 'student' && (
+                                <button onClick={() => leaveCourse(course.id)}>Leave Course</button>
+                            )}
+                        </div>
+                    ))}
+                </div>
             </div>
-            {userRole === 'instructor' ? (
-                isEditing ? (
-                    <div className="form-container">
-                        <h2>Edit Course</h2>
-                        <form onSubmit={updateCourse}>
-                            <label htmlFor="edit-title">Title:</label>
-                            <br />
-                            <input
-                                type="text"
-                                id="edit-title"
-                                name="title"
-                                required
-                                value={title}
-                                onChange={(e) => setTitle(e.target.value)}
-                            />
-                            <br />
-                            <label htmlFor="edit-description">Description:</label>
-                            <br />
-                            <textarea
-                                id="edit-description"
-                                name="description"
-                                required
-                                value={description}
-                                onChange={(e) => setDescription(e.target.value)}
-                            ></textarea>
-                            <br />
-                            <label htmlFor="edit-capacity">Capacity:</label>
-                            <br />
-                            <input
-                                type="number"
-                                id="edit-capacity"
-                                name="capacity"
-                                min="1"
-                                required
-                                value={capacity}
-                                onChange={(e) => setCapacity(e.target.value)}
-                            />
-                            <br />
-                            <input type="submit" value="Update Course"></input>
-                            <button type="button" onClick={stopEditing}>Cancel</button>
-                        </form>
-                    </div>
-                ) : (
-                    <div className="form-container">
-                        <h2>Create a Course</h2>
-                        <form onSubmit={createCourse}>
-                            <label htmlFor="create-title">Title:</label>
-                            <br />
-                            <input
-                                type="text"
-                                id="create-title"
-                                name="title"
-                                required
-                                onChange={(e) => setTitle(e.target.value)}
-                                value={title}
-                            />
-                            <br />
-                            <label htmlFor="create-description">Description:</label>
-                            <br />
-                            <textarea
-                                id="create-description"
-                                name="description"
-                                required
-                                onChange={(e) => setDescription(e.target.value)}
-                                value={description}
-                            ></textarea>
-                            <br />
-                            <label htmlFor="create-capacity">Capacity:</label>
-                            <br />
-                            <input
-                                type="number"
-                                id="create-capacity"
-                                name="capacity"
-                                min="1"
-                                required
-                                onChange={(e) => setCapacity(e.target.value)}
-                                value={capacity}
-                            />
-                            <br />
-                            <input type="submit" value="Submit"></input>
-                        </form>
-                    </div>
-                ) 
-            ) : null}
-            {/* Your existing JSX for courses */}
-            {userRole === 'student' && ( // Conditional rendering for students
+            )}
+            {userRole === 'instructor' && isEditing && (
+                <div className="form-container">
+                    <h2>Edit Course</h2>
+                    <form onSubmit={updateCourse}>
+                        <label htmlFor="edit-title">Title:</label>
+                        <br />
+                        <input
+                            type="text"
+                            id="edit-title"
+                            name="title"
+                            required
+                            value={title}
+                            onChange={(e) => setTitle(e.target.value)}
+                        />
+                        <br />
+                        <label htmlFor="edit-description">Description:</label>
+                        <br />
+                        <textarea
+                            id="edit-description"
+                            name="description"
+                            required
+                            value={description}
+                            onChange={(e) => setDescription(e.target.value)}
+                        ></textarea>
+                        <br />
+                        <label htmlFor="edit-capacity">Capacity:</label>
+                        <br />
+                        <input
+                            type="number"
+                            id="edit-capacity"
+                            name="capacity"
+                            min="1"
+                            required
+                            value={capacity}
+                            onChange={(e) => setCapacity(e.target.value)}
+                        />
+                        <br />
+                        <input type="submit" value="Update Course"></input>
+                        <button type="button" onClick={stopEditing}>Cancel</button>
+                    </form>
+                </div>
+            )}
+            {view === 'availableCourses' && (
                 <div>
                     <h2>Available Courses</h2>
                     <div className="courses-container">
@@ -283,7 +231,9 @@ function Home() {
                 </div>
             )}
         </div>
-    );    
-}
+    );
 
-export default Home;
+}
+    
+    export default Home;
+    

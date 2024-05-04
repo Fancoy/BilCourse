@@ -3,9 +3,10 @@ from . import views_api
 from rest_framework import routers
 
 router = routers.SimpleRouter(trailing_slash=False)
-router.register('courses', views_api.CourseModelViewSet)
-router.register('forums',views_api.ForumViewSet)
-router.register('assignments', views_api.AssignmentViewSet)
+router.register('courses', views_api.CourseModelViewSet, basename='courses')
+router.register('forums',views_api.ForumViewSet, basename='forums')
+router.register('assignments', views_api.AssignmentViewSet, basename='assignments')
+router.register('calendar', views_api.EventViewSet, basename='calendar')
 
 urlpatterns = []
 

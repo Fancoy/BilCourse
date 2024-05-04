@@ -1,14 +1,70 @@
-1- create a virtualenvironment in the root folder
-2- activate the virtualenvironment 
-3- navigate to the backend directory
-4- install requirements.txt (pip install -r requirements.txt in windows)
-5- navigate to the frontend directory
-6- npm install
-7- python manage.py makemigrations
-8- python manage.py migrate
-9- python manage.py runserver
-10- create a .env folder in the frontend directory
-11- in that.env file write: VITE_API_URL = "put the django server's address here"
-12- open a 2nd terminal 
-13- in the 2nd terminal write: npm run dev
-14- gl hf <3
+# Project Setup Instructions
+
+Follow these steps to set up and run the project on your local machine.
+
+## Prerequisites
+
+- Python 3.x
+- Node.js and npm
+
+## Backend Setup
+
+1. **Create and activate a virtual environment:**
+
+   ```
+   # Create virtual environment
+   py -m venv envName
+   # Activate virtual environment (Windows)
+   envName\Scripts\activate.bat
+   ```
+
+2. **Navigate to the backend directory:**
+
+   ```
+   cd path/to/backend
+   ```
+
+3. **Install Python requirements:**
+   ```
+   pip install -r requirements.txt
+   ```
+
+## Database Setup
+
+4. **Prepare and apply migrations:**
+
+   ```
+   python manage.py makemigrations
+   python manage.py migrate
+   ```
+
+5. **Run the backend server:**
+   ```
+   python manage.py runserver
+   ```
+
+## Frontend Setup
+
+6. **Navigate to the frontend directory and install dependencies:**
+
+   ```
+   cd path/to/frontend
+   npm install
+   npm install @mui/material @emotion/react @emotion/styled @mui/icons-material
+   ```
+
+7. **Create and configure the .env file:**
+
+   ```
+   # Navigate to the frontend directory
+   cd path/to/frontend
+   # Create a .env file
+   echo VITE_API_URL="put the django server's address here" > .env
+   ```
+
+8. **Run the frontend development server:**
+   ```
+   npm run dev
+   ```
+
+## GL HF <3
