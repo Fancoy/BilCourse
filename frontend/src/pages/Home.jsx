@@ -106,7 +106,7 @@ function Home() {
         e.preventDefault();
         console.log(title, description, capacity);
         api
-            .post("/api/courses/", { title, description, capacity })
+            .post("/api/courses", { title, description, capacity })
             .then((res) => {
                 if (res.status === 201) alert("Course created!");
                 else alert("Failed to create course.");

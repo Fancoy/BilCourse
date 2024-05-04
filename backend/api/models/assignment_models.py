@@ -14,7 +14,7 @@ class Assignment(models.Model):
         (SUMMER, 'Summer')
     ]
 
-    course =  models.ForeignKey('api.Course', on_delete=models.PROTECT, related_name='course_assignments')
+    course =  models.ForeignKey('api.Course', on_delete=models.CASCADE, related_name='course_assignments')
     title = models.CharField(max_length=255)
     slug = models.SlugField(unique=True, blank = True)
     description = models.TextField()
