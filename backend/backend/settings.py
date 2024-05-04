@@ -99,9 +99,9 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'bil_course_db',
+        'NAME': 'bilcourse',
         'USER': 'root',
-        'PASSWORD': 'benimSQL42.',
+        'PASSWORD': '1234',
         'HOST': 'localhost',
         'PORT': '3306',
     }

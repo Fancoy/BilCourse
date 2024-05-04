@@ -10,6 +10,10 @@ from django.shortcuts import get_object_or_404
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.db.models import Count, F
+from rest_framework import viewsets
+from .models import Event
+from .serializers import EventSerializer
+
 
 def award_heavy_load_badge(user):
     courses_taken = Course.objects.filter(students=user).count()
@@ -210,4 +214,7 @@ class CreateUserView(generics.CreateAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
     permission_classes = [AllowAny]
-    
+
+class EventViewSet(viewsets.ModelViewSet):
+    queryset = Event.objects.all()
+    serializer_class = EventSerializer    

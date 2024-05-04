@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from .models import User, Course, Forum, ForumMessage, Badge  # Make sure to import your custom User model
+from .models import Event
 
 class ForumMessageSerializer(serializers.ModelSerializer):
     class Meta:
@@ -75,3 +76,8 @@ class CourseSerializer(serializers.ModelSerializer):
                 raise serializers.ValidationError("All students must have a 'student' account type.")
 
         return data
+
+class EventSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Event
+        fields = '__all__'

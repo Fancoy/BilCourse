@@ -64,7 +64,7 @@ function Sidebar() {
       <SideBarOption text="Bookmarks" Icon={BookmarkIcon} />
       <SideBarOption text="Messages" Icon={ForumIcon} />
       <SideBarOption text="Search" Icon={SearchIcon} />
-      <SideBarOption text="Calender" Icon={EventIcon} />
+      <SideBarOption text="Calendar" Icon={EventIcon} />
 
 
 

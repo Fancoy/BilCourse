@@ -14,6 +14,16 @@ class Badge(models.Model):
     def __str__(self):
         return self.name
 
+class Event(models.Model):
+    title = models.CharField(max_length=255)
+    description = models.TextField()
+    start_date = models.DateTimeField()
+    end_date = models.DateTimeField()
+    course = models.ForeignKey('Course', on_delete=models.CASCADE, related_name='calendar_event')
+
+    def __str__(self):
+        return self.title
+
 @receiver(m2m_changed, sender=Badge.users.through)
 def update_user_count(sender, instance, action, **kwargs):
     if action == "post_add" or action == "post_remove":
