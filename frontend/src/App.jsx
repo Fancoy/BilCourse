@@ -7,6 +7,8 @@ import Profile from "./pages/Profile"
 import NotFound from "./pages/NotFound"
 import ProtectedRoute from "./components/ProtectedRoute"
 import CreateCourse from "./pages/CreateCourse"
+import CoursePage from "./pages/CoursePage"
+
 
 function Logout() {
   localStorage.clear()
@@ -44,6 +46,7 @@ function App() {
         />
         <Route path="*" element={<NotFound />}></Route>
         <Route path="/createcourse" element={<CreateCourse />} />
+        <Route path="/courses/:courseId" element={<CoursePage />} />
 
       </Routes>
     </BrowserRouter>

@@ -38,7 +38,7 @@ class CourseModelViewSet(viewsets.ModelViewSet):
     
     def get_object(self):
         # This method ensures that the course exists and the current user is the instructor
-        course = get_object_or_404(models.Course, pk=self.kwargs.get('pk'), instructor=self.request.user)
+        course = get_object_or_404(models.Course, pk=self.kwargs.get('pk'))
         return course
     
     def create(self, request, *args, **kwargs):

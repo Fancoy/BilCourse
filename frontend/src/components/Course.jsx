@@ -1,8 +1,14 @@
 import "../styles/Course.css";
+import { useNavigate } from 'react-router-dom';
 
 function Course({ course, onDelete }) {
+    const navigate = useNavigate();
+
+    const goToCoursePage = () => {
+        navigate(`/courses/${course.id}`);
+    };
     return (
-        <div className="course">
+        <div className="course"  onClick={goToCoursePage}>
             <h3>{course.title}</h3>
             <p>{course.description}</p>
             <p>Capacity: {course.capacity}</p>
