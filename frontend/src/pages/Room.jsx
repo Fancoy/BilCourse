@@ -73,7 +73,7 @@ function Room() {
   useEffect(() => {
         if (token) {
             // Append the token to the WebSocket URL as a query parameter
-            socketRef.current = new WebSocket(`ws://127.0.0.1:8000/ws/chat/lobby/?token=${token}`);
+            socketRef.current = new WebSocket(`ws://127.0.0.1:8000/ws/chat/${roomName}/?token=${token}`);
             console.log(token)
             socketRef.current.onopen = () => console.log("WebSocket is open now.");
             socketRef.current.onmessage = (e) => {
