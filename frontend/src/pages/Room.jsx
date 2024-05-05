@@ -61,29 +61,35 @@ export default Room;
  */
 import React, { useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
+ import { ACCESS_TOKEN } from '../../src/constants';
 
 function Room() {
   const { roomName } = useParams();
   const [messages, setMessages] = useState([]);
   const messageInputRef = useRef(null);
   const socketRef = useRef(null);
+  const token = localStorage.getItem(ACCESS_TOKEN); // Make sure this is dynamically retrieved, e.g., from localStorage
 
   useEffect(() => {
-    // Create WebSocket connection
-    socketRef.current = new WebSocket(`ws://127.0.0.1:8000/ws/chat/${roomName}/`);
-
-    socketRef.current.onopen = () => {
-      console.log("WebSocket is open now.");
-    };
-
-    socketRef.current.onmessage = (e) => {
-      const data = JSON.parse(e.data);
-      setMessages(prevMessages => [...prevMessages, data]);
-    };
-
-    socketRef.current.onclose = () => {
-      console.error('Chat socket closed unexpectedly');
-    };
+        if (token) {
+            // Append the token to the WebSocket URL as a query parameter
+            socketRef.current = new WebSocket(`ws://127.0.0.1:8000/ws/chat/lobby/?token=${token}`);
+            console.log(token)
+            socketRef.current.onopen = () => console.log("WebSocket is open now.");
+            socketRef.current.onmessage = (e) => {
+                const data = JSON.parse(e.data);
+                setMessages(prevMessages => [...prevMessages, data]);
+              };
+          
+            socketRef.current.onclose = (event) => {
+                console.error('WebSocket closed unexpectedly:', event);
+            };
+            socketRef.current.onerror = (error) => {
+                console.error('WebSocket error:', error);
+            };
+        } else {
+            console.error('JWT token not found');
+        }
 
     // Clean up the WebSocket connection when the component unmounts
     return () => {

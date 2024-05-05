@@ -1,13 +1,13 @@
 from datetime import datetime
 import json
-
+from api.models import User
 from channels.generic.websocket import AsyncWebsocketConsumer
 
 class ChatConsumer(AsyncWebsocketConsumer):
     async def connect(self):
         print("Connected user:", self.scope["user"])
         if self.scope["user"].is_authenticated:
-            print("Authenticated User:", self.scope["user"].username)
+            print("Authenticated User:", self.scope["user"].email)
         else:
             print("User is Anonymous")
         self.room_name = self.scope["url_route"]["kwargs"]["room_name"]
@@ -27,7 +27,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
         message = text_data_json["message"]
         user = self.scope['user']
         if user.is_authenticated:
-            sender = user.username
+            sender = user.email
         else:
             sender = "Anonymous"
 
