@@ -7,6 +7,7 @@ import Profile from "./pages/Profile"
 import NotFound from "./pages/NotFound"
 import ProtectedRoute from "./components/ProtectedRoute"
 import CreateCourse from "./pages/CreateCourse"
+import Room from "./pages/Room"
 
 function Logout() {
   localStorage.clear()
@@ -32,6 +33,14 @@ function App() {
         />
         <Route path="/login" element={<Login />} />
         <Route path="/logout" element={<Logout />} />
+        <Route
+          path="/chatroom/:roomName"
+          element={
+            <ProtectedRoute>
+              <Room />
+            </ProtectedRoute>
+          }
+        />
         <Route path="/register" element={<RegisterAndLogout />} />
         <Route
           path="/profile"

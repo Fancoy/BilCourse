@@ -1,6 +1,19 @@
 from rest_framework import serializers
-from .models import User, Course, Forum, ForumMessage, Badge  # Make sure to import your custom User model
+from .models import User, Course, Forum, ForumMessage, Badge, Chat, ChatMessage  # Make sure to import your custom User model
 
+class ChatMessageSerializer(serializers.ModelSerializer):
+    sender_email = serializers.EmailField(source='sender.email')
+
+    class Meta:
+        model = ChatMessage
+        fields = '__all__'
+class ChatSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Chat
+        fields = '__all__'
+    
+    def create(self, validated_data):
+        return Chat.objects.create(**validated_data)
 class ForumMessageSerializer(serializers.ModelSerializer):
     class Meta:
         model = ForumMessage

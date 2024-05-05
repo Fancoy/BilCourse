@@ -1,15 +1,87 @@
 from django.shortcuts import render
-from .models import User, Course, Forum, Badge  # Make sure to import your custom User model
+from .models import User, Course, Forum, Badge, Chat, ChatMessage  # Make sure to import your custom User model
 from rest_framework import generics
-from .serializers import UserSerializer, CourseSerializer, UserAccountTypeSerializer, ForumSerializer, BadgeSerializer
+from .serializers import UserSerializer, CourseSerializer, UserAccountTypeSerializer, ForumSerializer, BadgeSerializer, ChatSerializer, ChatMessageSerializer
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from django.db.models import Q
+from django.views.decorators.http import require_http_methods
 from rest_framework.exceptions import PermissionDenied
 from rest_framework.generics import UpdateAPIView, CreateAPIView
 from django.shortcuts import get_object_or_404
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.db.models import Count, F
+from django.http import JsonResponse
+
+""" class ChatMessagesView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, chat_id, *args, **kwargs):
+        chat = get_object_or_404(Chat, pk=chat_id)
+        chat_serializer = ChatSerializer(chat)
+
+        messages = ChatMessage.objects.filter(chat=chat).order_by('-created_time')
+        messages_serializer = ChatMessageSerializer(messages, many=True)
+
+        return Response({
+            'chat': chat_serializer.data,
+            'messages': messages_serializer.data
+        })
+class SendMessageView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, *args, **kwargs):
+        chat_id = request.data.get('chat_id')
+        content = request.data.get('content')
+
+        if not chat_id or not content:
+            return Response({'error': 'Both chat_id and content are required.'}, status=400)
+
+        chat = get_object_or_404(Chat, pk=chat_id)
+        course = chat.course
+
+        # Check if the user is related to the course
+        user = request.user
+        if not (course.students.filter(id=user.id).exists() or 
+                course.assistants.filter(id=user.id).exists() or 
+                course.instructor == user):
+            return Response({'error': 'User is not authorized to send messages in this chat.'}, status=403)
+
+        message = ChatMessage.objects.create(sender=user, chat=chat, content=content)
+        return Response({'message': 'Message sent successfully.', 'message_id': message.id}, status=201)
+class CreateChatView(CreateAPIView):
+    queryset = Chat.objects.all()
+    serializer_class = ChatSerializer
+    permission_classes = [IsAuthenticated]
+
+    def perform_create(self, serializer):
+        course_id = self.request.data.get('course')
+        title = self.request.data.get('title')
+        if not course_id or not title:
+            raise PermissionDenied("Course ID and title are required.")
+
+        course = get_object_or_404(Course, id=course_id)
+        
+        # Check if the current user is a part of the course
+        user = self.request.user
+        if not (course.students.filter(id=user.id).exists() or
+                course.assistants.filter(id=user.id).exists() or
+                course.instructor == user):
+            raise PermissionDenied("You are not authorized to create a chat for this course.")
+        
+        serializer.save(course=course)
+
+    
+class ChatListView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, *args, **kwargs):
+        course_id = request.GET.get('course_id')  # Assuming you pass course_id as query parameter
+        if not course_id:
+            return Response({'error': 'Course ID is required'}, status=400)
+        
+        chats = Chat.objects.filter(course_id=course_id).values('id', 'title')
+        return Response(list(chats)) """
 
 def index(request):
     return render(request, "hey.html")
