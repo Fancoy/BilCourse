@@ -7,6 +7,8 @@ PyJWT
 pytz
 sqlparse
 psycopg2-binary
-django-decouple
+python-dotenv
 mysqlclient
+channels_redis
+channels[daphne]
 drf-spectacular

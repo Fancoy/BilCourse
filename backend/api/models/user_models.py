@@ -5,6 +5,22 @@ from django.core.validators import MinValueValidator
 from django.db.models.signals import m2m_changed
 from django.dispatch import receiver
 
+class ChatMessage(models.Model):
+    sender = models.ForeignKey('User', on_delete=models.CASCADE, related_name='sent_messages')
+    chat = models.ForeignKey('Chat', on_delete=models.CASCADE, related_name='chat_messages')
+    created_time = models.DateTimeField(default=timezone.now)
+    content = models.TextField()
+
+    def __str__(self):
+        return f"Message from {self.sender.email} in {self.chat.title}"
+
+class Chat(models.Model):
+    title = models.CharField(max_length=255)
+    course = models.ForeignKey('Course', on_delete=models.CASCADE, related_name='chats')
+    
+    def __str__(self):
+        return self.title
+    
 class Badge(models.Model):
     name = models.CharField(max_length=100)
     description = models.TextField()
