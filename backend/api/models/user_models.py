@@ -6,7 +6,7 @@ from django.db.models.signals import m2m_changed
 from django.dispatch import receiver
 
 class ChatMessage(models.Model):
-    sender = models.ForeignKey('User', on_delete=models.CASCADE, related_name='sent_messages')
+    sender = models.ForeignKey('User', on_delete=models.CASCADE, related_name='sent_chat_messages')
     chat = models.ForeignKey('Chat', on_delete=models.CASCADE, related_name='chat_messages')
     created_time = models.DateTimeField(default=timezone.now)
     content = models.TextField()

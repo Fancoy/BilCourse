@@ -3,8 +3,10 @@ from rest_framework import viewsets, status, exceptions
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from api import models, serializers
+from api.models import Chat, User
 from django.db.models import Count, F, Q
 from django.contrib.auth import get_user_model
+from rest_framework.exceptions import PermissionDenied
 
 
 class CourseModelViewSet(viewsets.ModelViewSet):
@@ -46,15 +48,20 @@ class CourseModelViewSet(viewsets.ModelViewSet):
     
     def perform_create(self, serializer):
         if serializer.is_valid(): 
-            if self.request.user.account_type == get_user_model().INSTRUCTOR:
-                serializer.save(instructor=self.request.user)
+            if self.request.user.account_type == User.INSTRUCTOR:
+                course = serializer.save(instructor=self.request.user)
+                # Automatically create a chat for the newly created course
+                Chat.objects.create(
+                    title=f"{course.title}",
+                    course=course
+                ) 
             else:
                 print("Only instructors can create courses.")
                 # Raise a permission denied exception
-                raise exceptions.PermissionDenied(detail="Only instructors can create courses.")
+                raise PermissionDenied(detail="Only instructors can create courses.")
         else:
             print(serializer.errors)
-            raise exceptions.PermissionDenied(detail="Invalid data for course creation.")
+            raise PermissionDenied(detail="Invalid data for course creation.")
 
     
     def retrieve(self, request, *args, **kwargs):
