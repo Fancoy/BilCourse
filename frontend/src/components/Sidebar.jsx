@@ -15,27 +15,12 @@ import "./css/Sidebar.css";
 function Sidebar() {
 
     const [userRole, setUserRole] = useState('');
-    const [courses, setCourses] = useState([]);
-    const [availableCourses, setAvailableCourses] = useState([]); // Added for available courses
-    
-
 
     useEffect(() => {
-        getCourses();
         fetchUserRole();
         if (userRole === 'student') { // Fetch available courses if the user is a student
-            getAvailableCourses();
         }
     }, [userRole]); // Added userRole as a dependency to re-fetch when it's updated
-
-    const getAvailableCourses = () => {
-        // Fetch available courses where enrolled students are less than capacity
-        api.get("/api/courses/available/") // Assuming this is your endpoint for available courses
-            .then((res) => {
-                setAvailableCourses(res.data.available_courses); // Adjust based on your actual response structure
-            })
-            .catch((err) => console.error('Failed to fetch available courses:', err));
-    };
     
     const fetchUserRole = () => {
         // Assuming '/api/user/account-type/' is your endpoint for fetching user role
@@ -44,17 +29,6 @@ function Sidebar() {
                setUserRole(response.data.account_type); // Adjust based on actual response structure
            })
            .catch((error) => console.error('Failed to fetch user role:', error));
-    };
-
-    const getCourses = () => {
-        api
-            .get("/api/courses")
-            .then((res) => res.data)
-            .then((data) => {
-                setCourses(data);
-                console.log(data);
-            })
-            .catch((err) => alert(err));
     };
 
   return (
