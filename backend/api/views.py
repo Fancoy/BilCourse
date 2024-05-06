@@ -31,6 +31,14 @@ class UserProfileView(APIView):
             'assisting': user_assisting,
             'badges': user_badges
         })
+    
+class UserDetailView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        user = request.user
+        user_data = serializers.UserSerializer(user).data
+        return Response(user_data)
 
 class UserAccountTypeView(APIView):
     permission_classes = [IsAuthenticated]

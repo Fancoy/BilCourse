@@ -13,3 +13,14 @@ body {
   .blur-content {
     filter: blur(20px) !important;
   }
+
+  .enroll-leave-button {
+    padding: 10px 20px;
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-bottom: 20px;
+  }
+
