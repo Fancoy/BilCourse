@@ -8,7 +8,7 @@ import NotFound from "./pages/NotFound"
 import ProtectedRoute from "./components/ProtectedRoute"
 import CreateCourse from "./pages/CreateCourse"
 import CoursePage from "./pages/CoursePage"
-
+import SearchPage from "./pages/SearchPage"
 import Room from "./pages/Room"
 
 function Logout() {
@@ -53,6 +53,14 @@ function App() {
             </ProtectedRoute>
           }
         />
+        <Route
+          path="/search"
+          element={
+            <ProtectedRoute>
+              <SearchPage />
+            </ProtectedRoute>
+          }
+        />        
         <Route path="*" element={<NotFound />}></Route>
         <Route path="/createcourse" element={<CreateCourse />} />
         <Route path="/courses/:courseId" element={<CoursePage />} />

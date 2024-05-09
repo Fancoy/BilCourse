@@ -118,3 +118,16 @@ class CreateUserView(generics.CreateAPIView):
     serializer_class = serializers.UserSerializer
     permission_classes = [AllowAny]
 
+    
+class SearchCourseView(generics.ListAPIView):
+    queryset = models.Course.objects.all()
+    serializer_class = serializers.CourseSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        query = self.request.query_params.get('q', '')
+        if query:
+            return models.Course.objects.filter(
+                title__icontains=query
+            )
+        return models.Course.objects.all()

@@ -2,10 +2,10 @@ import React from "react";
 import SideBar from "../components/Sidebar";
 import Calendar from "../components/Calendar";
 import Grid from '@mui/material/Grid';
-import Home from "./Home";
+import Search from "./Search";
 import "./css/MainPage.css";
 
-function MainPage() {
+function SearchPage() {
       
     return (
         <div className="mainPage">
@@ -16,7 +16,7 @@ function MainPage() {
             </Grid>
             <Grid item xs={6}>
             {/* xs={9} indicates that the Feed should take 9 out of 12 grid units on extra-small screens */}
-            <Home header={"Home"} />
+            <Search header={"Home"} />
             </Grid>
             <Grid item xs={3}>
             {/* xs={3} indicates that the Calendar should take 3 out of 12 grid units on extra-small screens */}
@@ -27,4 +27,4 @@ function MainPage() {
     );
 }
 
-export default MainPage;
+export default SearchPage;
