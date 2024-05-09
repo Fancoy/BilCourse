@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import Calendar from './Calendar';
+import Calendar from '../components/Calendar';
 import { useNavigate } from 'react-router-dom'; // Import useNavigate
 
 function CalendarPage() {

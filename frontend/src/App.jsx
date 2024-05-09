@@ -9,6 +9,7 @@ import ProtectedRoute from "./components/ProtectedRoute"
 import CreateCourse from "./pages/CreateCourse"
 import CoursePage from "./pages/CoursePage"
 import SearchPage from "./pages/SearchPage"
+import CalendarPage from "./pages/CalendarPage"
 import Room from "./pages/Room"
 
 function Logout() {
@@ -60,7 +61,15 @@ function App() {
               <SearchPage />
             </ProtectedRoute>
           }
-        />        
+        /> 
+        {/*<Route
+          path="/calendar"
+          element={
+            <ProtectedRoute>
+              <CalendarPage />
+            </ProtectedRoute>
+          }
+        />      */}          
         <Route path="*" element={<NotFound />}></Route>
         <Route path="/createcourse" element={<CreateCourse />} />
         <Route path="/courses/:courseId" element={<CoursePage />} />

@@ -6,7 +6,7 @@
     padding: 20px;
     height: 100vh; /* Ensure it takes the full viewport height */
     overflow: auto;
-    max-height: 90vh; /* Limit the height to avoid taking the full viewport */
+    max-height: 80vh; /* Limit the height to avoid taking the full viewport */
     overflow-x: hidden;
 }
 
