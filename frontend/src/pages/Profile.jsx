@@ -1,8 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import api from "../api";
-import { useNavigate } from 'react-router-dom';
-import Grid from "@mui/material/Grid";
-import Sidebar from "../components/Sidebar";
 import "../styles/Profile.css";
 import "./css/MainPage.css";
 
@@ -20,7 +17,6 @@ const Profile = () => {
   });
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
-  const navigate = useNavigate();
 
   useEffect(() => {
     fetchUserProfile()
@@ -41,7 +37,6 @@ const Profile = () => {
   return (
     <div className="profile-container">
         <h1>Profile Page</h1>
-        <button onClick={() => navigate('/')} className="back-button">Back to Home</button>
         <div className="profile-details">
             <h2>User Details</h2>
             <p>First Name: {profile.user.first_name}</p>

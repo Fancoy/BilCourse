@@ -5,7 +5,15 @@
     padding: 20px;
     background: #f4f4f4;
     border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    display: flex;
+    flex-direction: column;
+    width: 90%; /* Adjust this if you want a specific width */
+    margin: auto;
+    padding: 20px;
+    height: 100vh; /* Ensure it takes the full viewport height */
+    overflow: auto;
+    max-height: 90vh; /* Limit the height to avoid taking the full viewport */
+    overflow-x: hidden;
 }
 
 .profile-container h1 {
