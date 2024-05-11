@@ -7,6 +7,7 @@ from api.models import Chat, User
 from django.db.models import Count, F, Q
 from django.contrib.auth import get_user_model
 from rest_framework.exceptions import PermissionDenied
+from ..views import award_heavy_load_badge
 
 
 class CourseModelViewSet(viewsets.ModelViewSet):
@@ -134,6 +135,7 @@ class CourseModelViewSet(viewsets.ModelViewSet):
             return Response({'error': 'Course is already at full capacity.'}, status=400)
         
         course.students.add(user)
+        award_heavy_load_badge(user)
         course.save()
         return Response({'success': f'{user.email} has been enrolled in {course.title}.'})
     
