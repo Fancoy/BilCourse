@@ -60,7 +60,7 @@ function Room() {
 export default Room;
  */
 import React, { useEffect, useRef, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { ACCESS_TOKEN } from '../../src/constants';
 
 function Room() {
@@ -69,6 +69,7 @@ function Room() {
   const messageInputRef = useRef(null);
   const socketRef = useRef(null);
   const token = localStorage.getItem(ACCESS_TOKEN); // Make sure this is dynamically retrieved, e.g., from localStorage
+  const navigate = useNavigate();
 
   useEffect(() => {
         if (token) {
@@ -98,6 +99,7 @@ function Room() {
       }
     };
   }, [roomName]);
+
 
   const sendMessage = () => {
     if (socketRef.current && socketRef.current.readyState === WebSocket.OPEN) {
@@ -142,6 +144,7 @@ function Room() {
       >
         Send
       </button>
+      <button onClick={() => navigate(-1)}>Go Back</button>
     </div>
   );
 }
