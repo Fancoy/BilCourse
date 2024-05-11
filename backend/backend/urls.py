@@ -2,7 +2,7 @@ from django.conf import settings
 from django.contrib import admin
 from django.urls import include, path, re_path
 from django.views.generic import TemplateView
-from api.views import CreateUserView, UserAccountTypeView, UserProfileView, UserDetailView, SearchCourseView
+from api.views import CreateUserView, UserAccountTypeView, UserProfileView, UserDetailView, SearchCourseView, SearchUserView, UserProfileCard
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from drf_spectacular import views as spectacular_views
 from django.conf.urls.static import static
@@ -16,7 +16,9 @@ urlpatterns = [
     path("api-auth/", include("rest_framework.urls")),
     path("api/", include("api.urls")),  # Include the urls from the api app
     path('api/user/', UserDetailView.as_view(), name='user-detail'),
-    path('api/search/', SearchCourseView.as_view(), name='search'),
+    path('api/users/<str:email>/', UserProfileCard.as_view(), name='user-profile-card'), 
+    path('api/search-course/', SearchCourseView.as_view(), name='search-course'),
+    path('api/search-user/', SearchUserView.as_view(), name='search-user'),
 
     path('docs/default/',
          spectacular_views.SpectacularAPIView.as_view(),

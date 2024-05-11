@@ -7,8 +7,6 @@ from django.shortcuts import get_object_or_404
 from rest_framework.views import APIView
 from rest_framework.response import Response
 
-
-
 def award_heavy_load_badge(user):
     courses_taken = models.Course.objects.filter(students=user).count()
     heavy_loader_badge, created = models.Badge.objects.get_or_create(name="Heavy Loader", description="Awarded to students who have taken more than 4 courses.")
@@ -39,6 +37,14 @@ class UserDetailView(APIView):
         user = request.user
         user_data = serializers.UserSerializer(user).data
         return Response(user_data)
+    
+class UserProfileCard(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, email, *args, **kwargs):
+        user = get_object_or_404(models.User, email=email)
+        serializer = serializers.UserSerializer(user)
+        return Response(serializer.data)
 
 class UserAccountTypeView(APIView):
     permission_classes = [IsAuthenticated]
@@ -131,3 +137,16 @@ class SearchCourseView(generics.ListAPIView):
                 title__icontains=query
             )
         return models.Course.objects.all()
+    
+class SearchUserView(generics.ListAPIView):
+    queryset = models.User.objects.all()
+    serializer_class = serializers.UserSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        query = self.request.query_params.get('q', '')
+        if query:
+            return models.User.objects.filter(
+                email__icontains=query
+            )
+        return models.User.objects.all()
