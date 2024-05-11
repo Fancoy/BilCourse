@@ -7,6 +7,7 @@ function Course({ course, onDelete }) {
     const goToCoursePage = () => {
         navigate(`/courses/${course.id}`);
     };
+
     return (
         <div className="course"  onClick={goToCoursePage}>
             <h3>{course.title}</h3>

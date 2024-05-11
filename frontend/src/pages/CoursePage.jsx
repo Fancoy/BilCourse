@@ -37,6 +37,10 @@ function CoursePage() {
                 });
         }
     }, [courseId]);
+
+    const goToChatRoom = () => {
+        navigate(`/chatroom/${course.title}`);
+    };
     
     const fetchCurrentUserEmail = () => {
         api.get("/api/user/")
@@ -238,6 +242,9 @@ function CoursePage() {
                                 )}
                             </div>
                         )}
+                        
+                        <button onClick={goToChatRoom}>Chat</button>
+
                     </div>
                 </Grid>
                 {/* Calendar */}
