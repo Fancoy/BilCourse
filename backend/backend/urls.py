@@ -3,6 +3,7 @@ from django.contrib import admin
 from django.urls import include, path, re_path
 from django.views.generic import TemplateView
 from api.views import CreateUserView, UserAccountTypeView, UserProfileView, UserDetailView, SearchCourseView
+from api.views_api.chat_views_api import CreatePrivateChatView, ListUserChatsView
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from drf_spectacular import views as spectacular_views
 from django.conf.urls.static import static
@@ -26,6 +27,9 @@ urlpatterns = [
     path('docs/', spectacular_views.SpectacularSwaggerView.as_view(url_name='schema'),
          name='swagger-ui'),
     path('api/profile/', UserProfileView.as_view(), name='user-profile'),
+    
+    path('api/user_chats/', ListUserChatsView.as_view(), name='user_chats'),
+    path('api/create_private_chat/', CreatePrivateChatView.as_view(), name='create_private_chat'),
     path("api/", include("api.urls")),  # Include the urls from the api app
 
     # Add a catch-all pattern

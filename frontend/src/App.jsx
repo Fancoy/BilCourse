@@ -11,6 +11,8 @@ import CoursePage from "./pages/CoursePage"
 import SearchPage from "./pages/SearchPage"
 import CalendarPage from "./pages/CalendarPage"
 import Room from "./pages/Room"
+import PrivateRoom from "./pages/PrivateRoom"
+import Messages from "./pages/Messages"
 
 function Logout() {
   localStorage.clear()
@@ -42,6 +44,22 @@ function App() {
           element={
             <ProtectedRoute>
               <Room />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/privatechat/:roomName"
+          element={
+            <ProtectedRoute>
+              <PrivateRoom /> 
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/messages"
+          element={
+            <ProtectedRoute>
+              <Messages /> 
             </ProtectedRoute>
           }
         />

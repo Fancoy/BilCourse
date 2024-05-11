@@ -61,7 +61,7 @@ export default Room;
  */
 import React, { useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
- import { ACCESS_TOKEN } from '../../src/constants';
+import { ACCESS_TOKEN } from '../../src/constants';
 
 function Room() {
   const { roomName } = useParams();
