@@ -4,6 +4,10 @@ from api.serializers.user_serializers import UserSerializerForCourse
 from api.serializers.forum_serializers import ForumRetrieveSerializer
 from django.contrib.auth import get_user_model
 
+class ActivitySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Activity
+        fields = ['id', 'course', 'title', 'description', 'date']
 class CourseListSerializer(serializers.ModelSerializer):
 
     class Meta:

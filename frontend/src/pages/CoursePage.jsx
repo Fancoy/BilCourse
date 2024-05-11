@@ -41,6 +41,13 @@ function CoursePage() {
     const goToChatRoom = () => {
         navigate(`/chatroom/${course.title}`);
     };
+
+    const goToActivities = () => {
+        navigate(`/courses/${courseId}/listactivities`);
+    };
+    const goToCreateActivity = () => {
+        navigate(`/courses/${courseId}/createactivity`);
+    };
     
     const fetchCurrentUserEmail = () => {
         api.get("/api/user/")
@@ -189,8 +196,9 @@ function CoursePage() {
                                         onChange={(e) => setTaEmail(e.target.value)} 
                                     />
                                     <button onClick={() => assignTA(course.id)}>Assign TA</button>
+                                    <button onClick={goToCreateActivity}>Create Activity</button>
                                 </>
-                            )}
+                            )}                    
                         {userRole === 'instructor' && isEditing && (
                             <div className="form-container">
                                 <h2>Edit Course</h2>
@@ -244,6 +252,7 @@ function CoursePage() {
                         )}
                         
                         <button onClick={goToChatRoom}>Chat</button>
+                        <button onClick={goToActivities}>Activities</button>
 
                     </div>
                 </Grid>

@@ -16,7 +16,7 @@ urlpatterns = [
     path("api/token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
     path("api-auth/", include("rest_framework.urls")),
     path("api/", include("api.urls")),  # Include the urls from the api app
-    path('api/user/', UserDetailView.as_view(), name='user-detail'),
+    path('api/user/', UserDetailView.as_view(), name='user-detail'),  
     path('api/search/', SearchCourseView.as_view(), name='search'),
 
     path('docs/default/',

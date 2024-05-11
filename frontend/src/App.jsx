@@ -13,6 +13,8 @@ import CalendarPage from "./pages/CalendarPage"
 import Room from "./pages/Room"
 import PrivateRoom from "./pages/PrivateRoom"
 import Messages from "./pages/Messages"
+import CreateActivity from "./pages/CreateActivity"
+import ListActivities from "./pages/ListActivities"
 
 function Logout() {
   localStorage.clear()
@@ -91,6 +93,8 @@ function App() {
         <Route path="*" element={<NotFound />}></Route>
         <Route path="/createcourse" element={<CreateCourse />} />
         <Route path="/courses/:courseId" element={<CoursePage />} />
+        <Route path="/courses/:courseId/listactivities" element={<ListActivities />} />
+        <Route path="/courses/:courseId/createactivity" element={<ProtectedRoute><CreateActivity /></ProtectedRoute>} />
 
       </Routes>
     </BrowserRouter>
