@@ -11,7 +11,7 @@ import CoursePage from "./pages/CoursePage"
 import SearchPage from "./pages/SearchPage"
 import CalendarPage from "./pages/CalendarPage"
 import Room from "./pages/Room"
-import UserPage from "./pages/UserPage"
+import UserProfile from "./pages/UserProfile"
 
 function Logout() {
   localStorage.clear()
@@ -74,7 +74,7 @@ function App() {
         <Route path="*" element={<NotFound />}></Route>
         <Route path="/createcourse" element={<CreateCourse />} />
         <Route path="/courses/:courseId" element={<CoursePage />} />
-        <Route path="/users/:email" element={<UserPage />} />
+        <Route path="/users/:email" element={<UserProfile />} />
 
       </Routes>
     </BrowserRouter>
