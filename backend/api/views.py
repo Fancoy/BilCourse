@@ -41,6 +41,14 @@ class UserDetailView(APIView):
         user = request.user
         user_data = UserSerializer(user).data
         return Response(user_data)
+    
+class UserProfileCard(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, email, *args, **kwargs):
+        user = get_object_or_404(models.User, email=email)
+        serializer = serializers.UserSerializer(user)
+        return Response(serializer.data)
 
 class UserAccountTypeView(APIView):
     permission_classes = [IsAuthenticated]
@@ -141,3 +149,17 @@ class SearchCourseView(generics.ListAPIView):
         if query:
             return models.Course.objects.filter(title__icontains=query)
         return models.Course.objects.all()
+    
+class SearchUserView(generics.ListAPIView):
+    queryset = models.User.objects.all()
+    serializer_class = serializers.UserSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        query = self.request.query_params.get('q', '')
+        if query:
+            return models.User.objects.filter(
+                email__icontains=query
+            )
+        return models.User.objects.all()
+

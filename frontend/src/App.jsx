@@ -16,6 +16,7 @@ import Messages from "./pages/Messages";
 import CreateActivity from "./pages/CreateActivity";
 import ListActivities from "./pages/ListActivities";
 import VerifyEmail from "./pages/VerifyEmail"; // Import the VerifyEmail component
+import UserProfile from "./pages/UserProfile"
 
 function Logout() {
   localStorage.clear();
@@ -94,6 +95,7 @@ function App() {
         <Route path="*" element={<NotFound />}></Route>
         <Route path="/createcourse" element={<CreateCourse />} />
         <Route path="/courses/:courseId" element={<CoursePage />} />
+        <Route path="/users/:email" element={<UserProfile />} />
         <Route path="/courses/:courseId/listactivities" element={<ListActivities />} />
         <Route path="/courses/:courseId/createactivity" element={<ProtectedRoute><CreateActivity /></ProtectedRoute>} />
         <Route path="/verify-email" element={<VerifyEmail />} /> {/* Add the VerifyEmail route */}
