@@ -17,6 +17,9 @@ import CreateActivity from "./pages/CreateActivity";
 import ListActivities from "./pages/ListActivities";
 import VerifyEmail from "./pages/VerifyEmail"; // Import the VerifyEmail component
 import UserProfile from "./pages/UserProfile"
+import CreateForum from "./pages/CreateForum";
+import ListForums from "./pages/ListForums";
+import Forum from "./pages/Forum";
 
 function Logout() {
   localStorage.clear();
@@ -94,9 +97,13 @@ function App() {
         /> */}
         <Route path="*" element={<NotFound />}></Route>
         <Route path="/createcourse" element={<CreateCourse />} />
+        <Route path="/createforum" element={<CreateCourse />} />
         <Route path="/courses/:courseId" element={<CoursePage />} />
+        <Route path="/forums/:forumId" element={<Forum />} />
+        <Route path="/courses/:courseId/createforum" element={<CreateForum />} />
         <Route path="/users/:email" element={<UserProfile />} />
         <Route path="/courses/:courseId/listactivities" element={<ListActivities />} />
+        <Route path="/courses/:courseId/listforums" element={<ListForums />} />
         <Route path="/courses/:courseId/createactivity" element={<ProtectedRoute><CreateActivity /></ProtectedRoute>} />
         <Route path="/verify-email" element={<VerifyEmail />} /> {/* Add the VerifyEmail route */}
       </Routes>

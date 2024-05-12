@@ -45,8 +45,14 @@ function CoursePage() {
     const goToActivities = () => {
         navigate(`/courses/${courseId}/listactivities`);
     };
+    const goToForums = () => {
+        navigate(`/courses/${courseId}/listforums`);
+    };
     const goToCreateActivity = () => {
         navigate(`/courses/${courseId}/createactivity`);
+    };
+    const goToCreateForum = () => {
+        navigate(`/courses/${courseId}/createforum`);
     };
     
     const fetchCurrentUserEmail = () => {
@@ -197,6 +203,7 @@ function CoursePage() {
                                     />
                                     <button onClick={() => assignTA(course.id)}>Assign TA</button>
                                     <button onClick={goToCreateActivity}>Create Activity</button>
+                                    <button onClick={goToCreateForum}>Create Forum</button>
                                 </>
                             )}                    
                         {userRole === 'instructor' && isEditing && (
@@ -253,6 +260,7 @@ function CoursePage() {
                         
                         <button onClick={goToChatRoom}>Chat</button>
                         <button onClick={goToActivities}>Activities</button>
+                        <button onClick={goToForums}>Forums</button>
 
                     </div>
                 </Grid>
