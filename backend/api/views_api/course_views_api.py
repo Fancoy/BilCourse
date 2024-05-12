@@ -7,6 +7,9 @@ from api.models import Chat, User
 from django.db.models import Count, F, Q
 from django.contrib.auth import get_user_model
 from rest_framework.exceptions import PermissionDenied
+from ..views import award_heavy_load_badge
+from django.core.mail import send_mail
+from django.conf import settings
 
 
 class CourseModelViewSet(viewsets.ModelViewSet):
@@ -101,6 +104,55 @@ class CourseModelViewSet(viewsets.ModelViewSet):
         
         return super().destroy(request, *args, **kwargs)
     
+    @action(detail=True, methods=['post'], url_path='create-activity')
+    def create_activity(self, request, pk=None):
+        """Create an activity for the specified course."""
+        course = self.get_object()
+
+        # Check if the user is the instructor or an assistant of the course
+        user = request.user
+        if not (course.instructor == user or course.assistants.filter(id=user.id).exists()):
+            return Response({'detail': 'You do not have permission to create an activity for this course.'}, status=status.HTTP_403_FORBIDDEN)
+
+        serializer = serializers.ActivitySerializer(data=request.data)
+        if serializer.is_valid():
+            # Ensure the activity is linked to the correct course
+            activity = serializer.save(course=course)
+            
+            # Collect all emails from students, instructor, and assistants
+            emails = [student.email for student in course.students.all()] + \
+                     [assistant.email for assistant in course.assistants.all()] + \
+                     [course.instructor.email]
+            
+            send_mail(
+                f'An activity has been created for your course {course.title}',
+                f'created activity {activity.title} for course {course.title}',
+                settings.EMAIL_HOST_USER,
+                emails,
+                fail_silently=False,
+            )
+            
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    @action(detail=True, methods=['get'], url_path='list-activities')
+    def list_activities(self, request, pk=None):
+        """List all activities for a specific course accessible only to course members."""
+        course = self.get_object()
+        user = request.user
+
+        # Check if the user is part of the course
+        if not (course.instructor == user or
+                course.assistants.filter(id=user.id).exists() or
+                course.students.filter(id=user.id).exists()):
+            return Response({'detail': 'You do not have permission to view activities for this course.'},
+                            status=status.HTTP_403_FORBIDDEN)
+
+        activities = models.Activity.objects.filter(course=course)
+        serializer = serializers.ActivitySerializer(activities, many=True)
+        return Response(serializer.data)
+    
     @action(detail=False, url_path='available', methods=['GET'])
     def available(self, request):
         queryset = self.filter_queryset(self.get_queryset())
@@ -134,6 +186,7 @@ class CourseModelViewSet(viewsets.ModelViewSet):
             return Response({'error': 'Course is already at full capacity.'}, status=400)
         
         course.students.add(user)
+        award_heavy_load_badge(user)
         course.save()
         return Response({'success': f'{user.email} has been enrolled in {course.title}.'})
     

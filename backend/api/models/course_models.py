@@ -18,3 +18,18 @@ class Course(models.Model):
     def save(self, *args, **kwargs):
         self.slug = slugify(self.title)
         super(Course, self).save()
+        
+class Activity(models.Model):
+    course = models.ForeignKey(Course, on_delete=models.CASCADE, verbose_name="Related Course")
+    title = models.CharField(max_length=100, verbose_name="Activity Title")
+    description = models.TextField()
+    date = models.DateTimeField()
+
+    class Meta:
+        unique_together = ('course', 'title')  # Ensuring the combination of course and title is unique
+
+    def __str__(self):
+        return f"{self.title} in {self.course.title}"
+
+    def save(self, *args, **kwargs):
+        super(Activity, self).save(*args, **kwargs)

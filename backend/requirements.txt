@@ -12,3 +12,5 @@ mysqlclient
 channels_redis
 channels[daphne]
 drf-spectacular
+django-environ
+daphne
