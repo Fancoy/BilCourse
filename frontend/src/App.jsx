@@ -96,7 +96,7 @@ function App() {
         <Route path="/courses/:courseId" element={<CoursePage />} />
         <Route path="/courses/:courseId/listactivities" element={<ListActivities />} />
         <Route path="/courses/:courseId/createactivity" element={<ProtectedRoute><CreateActivity /></ProtectedRoute>} />
-        <Route path="/assingments/:courseId/createassignment" element={<ProtectedRoute><CreateAssignment /></ProtectedRoute>} />
+        <Route path="/assignments/:courseId/createassignment" element={<ProtectedRoute><CreateAssignment /></ProtectedRoute>} />
       </Routes>
     </BrowserRouter>
   )
