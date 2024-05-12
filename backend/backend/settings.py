@@ -112,7 +112,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'bil_course_db',
         'USER': 'root',
-        'PASSWORD': 'Emregurbuz1!',
+        'PASSWORD': 'benimSQL42.',
         'HOST': 'localhost',
         'PORT': '3306',
     }
