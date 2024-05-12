@@ -54,6 +54,10 @@ function CoursePage() {
     const goToCreateForum = () => {
         navigate(`/courses/${courseId}/createforum`);
     };
+
+    const goToCreateAssignment = () => {
+        navigate(`/assignments/${courseId}/createassignment`);
+    };
     
     const fetchCurrentUserEmail = () => {
         api.get("/api/user/")
@@ -171,6 +175,7 @@ function CoursePage() {
                         <p className="course-instructor">Instructor: {course.instructor?.email}</p>
                         <p className="course-description">{course.description}</p>
                         <p className="course-info">Capacity: {course.capacity}</p>
+                        <button onClick={() => navigate(`/assignments/${courseId}/listassignments`)}>View Assignments</button>
                         {course.assistants && course.assistants.length > 0 && (
                             <>
                                 <h4>Assistants</h4>
@@ -203,6 +208,7 @@ function CoursePage() {
                                     />
                                     <button onClick={() => assignTA(course.id)}>Assign TA</button>
                                     <button onClick={goToCreateActivity}>Create Activity</button>
+                                    <button onClick={goToCreateAssignment}>Create Assignment</button>
                                     <button onClick={goToCreateForum}>Create Forum</button>
                                 </>
                             )}                    
