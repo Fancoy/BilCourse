@@ -1,20 +1,22 @@
-import React from "react";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import Login from "./pages/Login";
-import Register from "./pages/Register";
-import MainPage from "./pages/MainPage";
-import ProfilePage from "./pages/ProfilePage";
-import NotFound from "./pages/NotFound";
-import ProtectedRoute from "./components/ProtectedRoute";
-import CreateCourse from "./pages/CreateCourse";
-import CoursePage from "./pages/CoursePage";
-import SearchPage from "./pages/SearchPage";
-import CalendarPage from "./pages/CalendarPage";
-import Room from "./pages/Room";
-import PrivateRoom from "./pages/PrivateRoom";
-import Messages from "./pages/Messages";
-import CreateActivity from "./pages/CreateActivity";
-import ListActivities from "./pages/ListActivities";
+import React from "react"
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom"
+import Login from "./pages/Login"
+import Register from "./pages/Register"
+import MainPage from "./pages/MainPage"
+import ProfilePage from "./pages/ProfilePage"
+import NotFound from "./pages/NotFound"
+import ProtectedRoute from "./components/ProtectedRoute"
+import CreateCourse from "./pages/CreateCourse"
+import CoursePage from "./pages/CoursePage"
+import SearchPage from "./pages/SearchPage"
+import CalendarPage from "./pages/CalendarPage"
+import Room from "./pages/Room"
+import PrivateRoom from "./pages/PrivateRoom"
+import Messages from "./pages/Messages"
+import CreateActivity from "./pages/CreateActivity"
+import ListActivities from "./pages/ListActivities"
+import CreateAssignment from "./components/CreateAssignment"
+import ListAssignments from "./components/ListAssignments"
 import VerifyEmail from "./pages/VerifyEmail"; // Import the VerifyEmail component
 import UserProfile from "./pages/UserProfile"
 
@@ -98,6 +100,9 @@ function App() {
         <Route path="/users/:email" element={<UserProfile />} />
         <Route path="/courses/:courseId/listactivities" element={<ListActivities />} />
         <Route path="/courses/:courseId/createactivity" element={<ProtectedRoute><CreateActivity /></ProtectedRoute>} />
+        <Route path="/assignments/:courseId/listassignments" element={<ListAssignments />} />
+        <Route path="/assignments/:courseId/createassignment" element={<ProtectedRoute><CreateAssignment /></ProtectedRoute>} />
+
         <Route path="/verify-email" element={<VerifyEmail />} /> {/* Add the VerifyEmail route */}
       </Routes>
     </BrowserRouter>
