@@ -4,6 +4,8 @@ from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.db import database_sync_to_async
 from api.models import User, Chat, ChatMessage, Course, ChatMessagePrivate, ChatPrivate
 from django.utils import timezone
+from django.core.mail import send_mail
+from django.conf import settings
 import re
 
 def sanitize_group_name(name):
@@ -105,6 +107,19 @@ class ChatConsumer(AsyncWebsocketConsumer):
                     content=content,
                     created_time=timestamp
                 )
+                if chat.chat_messages.count() %10 == 0:
+                    course = Course.objects.get(chats__title=room_name)
+                    emails = [student.email for student in course.students.all()] + \
+                    [assistant.email for assistant in course.assistants.all()] + \
+                    [course.instructor.email]
+            
+                    send_mail(
+                        f'You got 10 new messages from the chatroom of the course: {course.title}',
+                        f'You got 10 new messages from the chatroom of the course: {course.title}',
+                        settings.EMAIL_HOST_USER,
+                        emails,
+                        fail_silently=False,
+                    )
             except Chat.DoesNotExist:
                 print(f"No chat found with title {room_name}. Message not saved.")
 

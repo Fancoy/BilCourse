@@ -8,6 +8,8 @@ from django.db.models import Count, F, Q
 from django.contrib.auth import get_user_model
 from rest_framework.exceptions import PermissionDenied
 from ..views import award_heavy_load_badge
+from django.core.mail import send_mail
+from django.conf import settings
 
 
 class CourseModelViewSet(viewsets.ModelViewSet):
@@ -115,7 +117,21 @@ class CourseModelViewSet(viewsets.ModelViewSet):
         serializer = serializers.ActivitySerializer(data=request.data)
         if serializer.is_valid():
             # Ensure the activity is linked to the correct course
-            serializer.save(course=course)
+            activity = serializer.save(course=course)
+            
+            # Collect all emails from students, instructor, and assistants
+            emails = [student.email for student in course.students.all()] + \
+                     [assistant.email for assistant in course.assistants.all()] + \
+                     [course.instructor.email]
+            
+            send_mail(
+                f'An activity has been created for your course {course.title}',
+                f'created activity {activity.title} for course {course.title}',
+                settings.EMAIL_HOST_USER,
+                emails,
+                fail_silently=False,
+            )
+            
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

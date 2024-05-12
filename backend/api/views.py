@@ -1,13 +1,15 @@
 from django.shortcuts import render
-from rest_framework import generics
-from api import models, serializers
+from rest_framework import generics, status
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.exceptions import PermissionDenied
 from django.shortcuts import get_object_or_404
 from rest_framework.views import APIView
 from rest_framework.response import Response
-
-
+from . import models, serializers  # Ensure these are imported correctly
+from .serializers import UserSerializer, VerifyEmailSerializer
+from .models import User
+from rest_framework.permissions import AllowAny
+import logging
 
 def award_heavy_load_badge(user):
     courses_taken = models.Course.objects.filter(students=user).count()
@@ -19,7 +21,7 @@ def award_heavy_load_badge(user):
 class UserProfileView(APIView):
     def get(self, request, format=None):
         user = request.user
-        user_data = serializers.UserSerializer(user).data
+        user_data = UserSerializer(user).data
         user_courses = serializers.CourseSerializer(models.Course.objects.filter(students=user), many=True).data
         user_assisting = serializers.CourseSerializer(models.Course.objects.filter(assistants=user), many=True).data
         user_teaching = serializers.CourseSerializer(models.Course.objects.filter(instructor=user), many=True).data
@@ -31,14 +33,22 @@ class UserProfileView(APIView):
             'assisting': user_assisting,
             'badges': user_badges
         })
-    
+
 class UserDetailView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
         user = request.user
-        user_data = serializers.UserSerializer(user).data
+        user_data = UserSerializer(user).data
         return Response(user_data)
+    
+class UserProfileCard(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, email, *args, **kwargs):
+        user = get_object_or_404(models.User, email=email)
+        serializer = serializers.UserSerializer(user)
+        return Response(serializer.data)
 
 class UserAccountTypeView(APIView):
     permission_classes = [IsAuthenticated]
@@ -49,24 +59,49 @@ class UserAccountTypeView(APIView):
         return Response(serializer.data)
 
 class CreateUserView(generics.CreateAPIView):
-    queryset = models.User.objects.all()
-    serializer_class = serializers.UserSerializer
+    serializer_class = UserSerializer
     permission_classes = [AllowAny]
-    
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        if serializer.is_valid():
+            self.perform_create(serializer)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+logger = logging.getLogger(__name__)
+
+class VerifyEmailView(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request, *args, **kwargs):
+        serializer = VerifyEmailSerializer(data=request.data)
+        if serializer.is_valid():
+            email = serializer.validated_data['email']
+            verification_code = serializer.validated_data['verification_code']
+            try:
+                user = User.objects.get(email=email)
+                if user.verification_code == verification_code:
+                    user.is_verified = True
+                    user.verification_code = None  # Clear the verification code after successful verification
+                    user.save()
+                    return Response({'message': 'Email verified successfully!'}, status=status.HTTP_200_OK)
+                else:
+                    return Response({'error': 'Invalid verification code'}, status=status.HTTP_400_BAD_REQUEST)
+            except User.DoesNotExist:
+                return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 class AssignmentListCreateView(generics.ListCreateAPIView):
     queryset = models.Assignment.objects.all()
     serializer_class = serializers.AssignmentSerializer
 
     def perform_create(self, serializer):
-        # Get the course from the serializer's validated data
         course_id = serializer.validated_data.get('course').id
         course = get_object_or_404(models.Course, id=course_id)
-
-        # Check if the current user is the instructor of the course
         if self.request.user == course.instructor:
             serializer.save()
         else:
-            # If not the instructor, raise a permission denied response
             raise PermissionDenied("You are not authorized to create an assignment for this course.")
 
 class AssignmentUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
@@ -75,9 +110,7 @@ class AssignmentUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = [IsAuthenticated]
 
     def check_object_permissions(self, request, obj):
-        # Check if the current user is the instructor of the course
         if request.user != obj.course.instructor:
-            # If not the instructor, raise a permission denied response
             raise PermissionDenied("You are not authorized to update or delete this assignment.")
         super().check_object_permissions(request, obj)
 
@@ -87,15 +120,11 @@ class StudentAssignmentListCreateView(generics.ListCreateAPIView):
     permission_classes = [IsAuthenticated]
 
     def perform_create(self, serializer):
-        # Get the assignment from the serializer's validated data
         assignment_id = serializer.validated_data.get('assignment').id
         assignment = get_object_or_404(models.Assignment, id=assignment_id)
-
-        # Check if the current user is a student of the course
         if self.request.user in assignment.course.students.all():
             serializer.save(student=self.request.user)
         else:
-            # If not a student, raise a permission denied response
             raise PermissionDenied("You are not authorized to create a student assignment for this course.")
 
 class StudentAssignmentUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
@@ -106,19 +135,10 @@ class StudentAssignmentUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     def delete(self, request, *args, **kwargs):
         course = self.get_object()
         user = self.request.user
-
-        # Check if the user is the instructor of the course
         if course.instructor != user:
             raise PermissionDenied(detail="You do not have permission to delete this course.")
-        
         return super().delete(request, *args, **kwargs)
 
-class CreateUserView(generics.CreateAPIView):
-    queryset = models.User.objects.all()
-    serializer_class = serializers.UserSerializer
-    permission_classes = [AllowAny]
-
-    
 class SearchCourseView(generics.ListAPIView):
     queryset = models.Course.objects.all()
     serializer_class = serializers.CourseSerializer
@@ -127,7 +147,19 @@ class SearchCourseView(generics.ListAPIView):
     def get_queryset(self):
         query = self.request.query_params.get('q', '')
         if query:
-            return models.Course.objects.filter(
-                title__icontains=query
-            )
+            return models.Course.objects.filter(title__icontains=query)
         return models.Course.objects.all()
+    
+class SearchUserView(generics.ListAPIView):
+    queryset = models.User.objects.all()
+    serializer_class = serializers.UserSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        query = self.request.query_params.get('q', '')
+        if query:
+            return models.User.objects.filter(
+                email__icontains=query
+            )
+        return models.User.objects.all()
+

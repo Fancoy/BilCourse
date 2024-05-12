@@ -106,6 +106,8 @@ class User(AbstractBaseUser, PermissionsMixin):
     account_type = models.CharField(max_length=10, choices=ACCOUNT_TYPE_CHOICES, blank=True, null=True)
     is_staff = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
+    verification_code = models.CharField(max_length=6, blank=True, null=True)  # Added field
+    is_verified = models.BooleanField(default=False)  # Added field
 
     objects = CustomUserManager()
 
