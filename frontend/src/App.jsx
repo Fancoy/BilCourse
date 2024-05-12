@@ -1,29 +1,30 @@
-import react from "react"
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom"
-import Login from "./pages/Login"
-import Register from "./pages/Register"
-import MainPage from "./pages/MainPage"
-import ProfilePage from "./pages/ProfilePage"
-import NotFound from "./pages/NotFound"
-import ProtectedRoute from "./components/ProtectedRoute"
-import CreateCourse from "./pages/CreateCourse"
-import CoursePage from "./pages/CoursePage"
-import SearchPage from "./pages/SearchPage"
-import CalendarPage from "./pages/CalendarPage"
-import Room from "./pages/Room"
-import PrivateRoom from "./pages/PrivateRoom"
-import Messages from "./pages/Messages"
-import CreateActivity from "./pages/CreateActivity"
-import ListActivities from "./pages/ListActivities"
+import React from "react";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
+import MainPage from "./pages/MainPage";
+import ProfilePage from "./pages/ProfilePage";
+import NotFound from "./pages/NotFound";
+import ProtectedRoute from "./components/ProtectedRoute";
+import CreateCourse from "./pages/CreateCourse";
+import CoursePage from "./pages/CoursePage";
+import SearchPage from "./pages/SearchPage";
+import CalendarPage from "./pages/CalendarPage";
+import Room from "./pages/Room";
+import PrivateRoom from "./pages/PrivateRoom";
+import Messages from "./pages/Messages";
+import CreateActivity from "./pages/CreateActivity";
+import ListActivities from "./pages/ListActivities";
+import VerifyEmail from "./pages/VerifyEmail"; // Import the VerifyEmail component
 
 function Logout() {
-  localStorage.clear()
-  return <Navigate to="/login" />
+  localStorage.clear();
+  return <Navigate to="/login" />;
 }
 
 function RegisterAndLogout() {
-  localStorage.clear()
-  return <Register />
+  localStorage.clear();
+  return <Register />;
 }
 
 function App() {
@@ -53,7 +54,7 @@ function App() {
           path="/privatechat/:roomName"
           element={
             <ProtectedRoute>
-              <PrivateRoom /> 
+              <PrivateRoom />
             </ProtectedRoute>
           }
         />
@@ -61,7 +62,7 @@ function App() {
           path="/messages"
           element={
             <ProtectedRoute>
-              <Messages /> 
+              <Messages />
             </ProtectedRoute>
           }
         />
@@ -81,24 +82,24 @@ function App() {
               <SearchPage />
             </ProtectedRoute>
           }
-        /> 
-        {/*<Route
+        />
+        {/* <Route
           path="/calendar"
           element={
             <ProtectedRoute>
               <CalendarPage />
             </ProtectedRoute>
           }
-        />      */}          
+        /> */}
         <Route path="*" element={<NotFound />}></Route>
         <Route path="/createcourse" element={<CreateCourse />} />
         <Route path="/courses/:courseId" element={<CoursePage />} />
         <Route path="/courses/:courseId/listactivities" element={<ListActivities />} />
         <Route path="/courses/:courseId/createactivity" element={<ProtectedRoute><CreateActivity /></ProtectedRoute>} />
-
+        <Route path="/verify-email" element={<VerifyEmail />} /> {/* Add the VerifyEmail route */}
       </Routes>
     </BrowserRouter>
-  )
+  );
 }
 
-export default App
+export default App;
