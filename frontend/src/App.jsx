@@ -107,7 +107,7 @@ function App() {
         <Route path="/courses/:courseId/listactivities" element={<ListActivities />} />
         <Route path="/courses/:courseId/listforums" element={<ListForums />} />
         <Route path="/courses/:courseId/createactivity" element={<ProtectedRoute><CreateActivity /></ProtectedRoute>} />
-        <Route path="/assignments/:courseId/listassignments" element={<ListAssignments />} />
+        <Route path="/courses/:courseId/list-assignments" element={<ListAssignments />} />
         <Route path="/assignments/:courseId/createassignment" element={<ProtectedRoute><CreateAssignment /></ProtectedRoute>} />
 
         <Route path="/verify-email" element={<VerifyEmail />} /> {/* Add the VerifyEmail route */}

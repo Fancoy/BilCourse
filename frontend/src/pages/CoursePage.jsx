@@ -175,7 +175,7 @@ function CoursePage() {
                         <p className="course-instructor">Instructor: {course.instructor?.email}</p>
                         <p className="course-description">{course.description}</p>
                         <p className="course-info">Capacity: {course.capacity}</p>
-                        <button onClick={() => navigate(`/assignments/${courseId}/listassignments`)}>View Assignments</button>
+                        <button onClick={() => navigate(`/courses/${courseId}/list-assignments`)}>View Assignments</button>
                         {course.assistants && course.assistants.length > 0 && (
                             <>
                                 <h4>Assistants</h4>

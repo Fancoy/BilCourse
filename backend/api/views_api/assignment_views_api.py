@@ -1,8 +1,12 @@
 from django.db.utils import IntegrityError
-from rest_framework import viewsets, exceptions
+from rest_framework import viewsets, exceptions, mixins
 from api import models, serializers
 
-class AssignmentViewSet(viewsets.ModelViewSet):
+class AssignmentViewSet(mixins.CreateModelMixin,
+                        mixins.RetrieveModelMixin,
+                        mixins.UpdateModelMixin,
+                        mixins.DestroyModelMixin,
+                        viewsets.GenericViewSet):
     queryset = models.Assignment.objects.all()
 
     def get_serializer_class(self):
@@ -10,8 +14,6 @@ class AssignmentViewSet(viewsets.ModelViewSet):
             return serializers.AssignmentCreateSerializer
         elif self.action == 'retrieve':
             return serializers.AssignmentRetrieveSerializer
-        elif self.action == 'list':
-            return serializers.AssignmentListSerializer
         elif self.action == 'update':
             return serializers.AssignmentUpdateSerializer
         else:

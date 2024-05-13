@@ -13,7 +13,7 @@ function ListAssignments() {
     useEffect(() => {
         const fetchAssignments = async () => {
             try {
-                const response = await api.get(`/api/assignments/?course_assignments.slug.id=${courseId}`);
+                const response = await api.get(`/api/courses/${courseId}/assignment-list`);
                 setAssignments(response.data);
                 setLoading(false);
             } catch (error) {
