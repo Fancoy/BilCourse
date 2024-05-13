@@ -50,6 +50,8 @@ class AssignmentSerializer(serializers.ModelSerializer):
         return data
 
 class StudentAssignmentSerializer(serializers.ModelSerializer):
+    student_email = serializers.EmailField(source='student.email', read_only=True)
+    assignment_title = serializers.CharField(source='assignment.title', read_only=True)
     class Meta:
         model = models.StudentAssignment
         fields = '__all__'
