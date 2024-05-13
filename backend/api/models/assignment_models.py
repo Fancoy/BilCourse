@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth import get_user_model
 from django.utils.text import slugify
+from django.utils import timezone
 
 class Assignment(models.Model):
       
@@ -34,24 +35,11 @@ class Assignment(models.Model):
         super(Assignment, self).save()
 
 class StudentAssignment(models.Model):
-
-    # semester choices
-    FALL = 'fall'
-    SPRING = 'spring'
-    SUMMER = 'summer'
-    SEMESTER_CHOICES = [
-        (FALL, 'Fall'),
-        (SPRING, 'Spring'),
-        (SUMMER, 'Summer')
-    ]
-
     student = models.ForeignKey(get_user_model(), on_delete=models.CASCADE, related_name='student_assignments')
     assignment = models.ForeignKey(Assignment, on_delete=models.CASCADE, related_name='assignment_students')
-    semester = models.CharField(max_length=10, choices=SEMESTER_CHOICES, blank=True, null=True)
-    year = models.IntegerField()
-    start_time = models.DateTimeField()
-    end_time = models.DateTimeField()
+    upload_time = models.DateTimeField(default=timezone.now)
     result_file = models.FileField(upload_to='student_assignment_results/')
+    grade = models.CharField(max_length=2, blank=True, null=True)
 
     def __str__(self):
         return f"{self.assignment.title} by {self.student.email}"
