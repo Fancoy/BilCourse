@@ -89,6 +89,14 @@ function App() {
             </ProtectedRoute>
           }
         />
+          <Route
+          path="/calendar"
+          element={
+            <ProtectedRoute>
+              <CalendarPage />
+            </ProtectedRoute>
+          }
+        />
         {/* <Route
           path="/calendar"
           element={

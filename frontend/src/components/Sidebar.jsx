@@ -35,7 +35,6 @@ function Sidebar() {
     <div className="sidebar">
       <SideBarOption text="Home" Icon={HomeIcon} />
       <SideBarOption text="Profile" Icon={AccountCircleIcon} />
-      <SideBarOption text="Bookmarks" Icon={BookmarkIcon} />
       <SideBarOption text="Messages" Icon={ForumIcon} />
       <SideBarOption text="Search" Icon={SearchIcon} />
       <SideBarOption text="Calendar" Icon={EventIcon} />
