@@ -181,7 +181,7 @@ class StudentAssignmentViewSet(viewsets.ModelViewSet):
     filterset_fields = ['student', 'assignment', 'grade']
     search_fields = ['student__email', 'assignment__title']
     ordering_fields = ['upload_time', 'grade']
-    permission_classes = [AllowAny]
+    permission_classes = [permissions.IsAuthenticated]
 
     @action(detail=True, url_path='details', methods=['get'])
     def get_student_assignment_details(self, request, pk=None):
@@ -251,3 +251,9 @@ class StudentAssignmentViewSet(viewsets.ModelViewSet):
             return self.get_paginated_response(serializer.data)
         serializer = self.get_serializer(assignments, many=True)
         return Response(serializer.data)
+    
+    @action(detail=True, methods=['delete'], url_path='delete')
+    def delete_submission(self, request, pk=None):
+        assignment = self.get_object()
+        assignment.delete()
+        return Response({'status': 'submission deleted'}, status=status.HTTP_204_NO_CONTENT)
