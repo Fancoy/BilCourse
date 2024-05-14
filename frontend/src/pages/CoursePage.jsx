@@ -175,6 +175,8 @@ function CoursePage() {
     if (!course) return <p className="course-loading">Loading...</p>;
     const studentExists = course.students.some(student => student.email === currentUserEmail);
 
+    const isTA = course.assistants && course.assistants.some(assistant => assistant.email === currentUserEmail);
+
     return (
         <div className="coursePage">
             <Grid container spacing={2}>
@@ -265,14 +267,18 @@ function CoursePage() {
                                 </form>
                             </div>
                         )}
+                        {(studentExists || userRole === 'instructor' || isTA) &&(
+                            <div>
+                                <button onClick={() => navigate(`/assignments/${courseId}/listassignments`)}>View Assignments</button>
+                                <button onClick={goToChatRoom}>Chat</button>
+                                <button onClick={goToActivities}>Activities</button>
+                                <button onClick={goToForums}>Forums</button>
+                            </div>
+                        )}
                         {userRole === 'student' && (
                             <div className="enroll-leave-buttons">
                                 {studentExists ? (
                                     <div>
-                                        <button onClick={() => navigate(`/assignments/${courseId}/listassignments`)}>View Assignments</button>
-                                        <button onClick={goToChatRoom}>Chat</button>
-                                        <button onClick={goToActivities}>Activities</button>
-                                        <button onClick={goToForums}>Forums</button>
                                         <button onClick={() => leaveCourse(course.id)}>Leave Course</button>
                                     </div>
                                 ) : (
