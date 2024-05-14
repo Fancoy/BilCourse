@@ -12,7 +12,8 @@ function ListAssignments() {
         const fetchAssignments = async () => {
             try {
                 const response = await api.get(`/api/assignments?course=${courseId}`);
-                setAssignments(response.data);
+                const filteredAssignments = response.data.filter(assignment => assignment.course === parseInt(courseId));
+                setAssignments(filteredAssignments);
                 setLoading(false);
             } catch (error) {
                 setError(error);
@@ -34,6 +35,7 @@ function ListAssignments() {
     return (
         <div>
             <h1>Assignments for Course ID: {courseId}</h1>
+            {console.log(assignments)}
             {assignments.length > 0 ? (
                 <ul>
                     {assignments.map(assignment => (
