@@ -38,6 +38,8 @@ class CourseModelViewSet(viewsets.ModelViewSet):
             return serializers.ForumCreateSerializer
         elif self.action =='list_forum':
             return serializers.ForumListSerializer
+        elif self.action == 'list_assignment':
+            return serializers.AssignmentListSerializer
         else:
             return serializers.CourseSerializer
     
@@ -252,11 +254,18 @@ class CourseModelViewSet(viewsets.ModelViewSet):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        
 
 
+    @action(detail=True, url_path = 'assignment-list', methods=['GET'])
+    def list_assignment(self, request, pk, format=None):
+        assignment_queryset = self.get_object().course_assignments.all()
+        page = self.paginate_queryset(assignment_queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
 
-
+        serializer = self.get_serializer(assignment_queryset, many=True)
+        return Response( serializer.data, status=status.HTTP_200_OK)
 
 
         
