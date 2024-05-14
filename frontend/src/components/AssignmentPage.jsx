@@ -46,7 +46,7 @@ function AssignmentPage() {
             try {
                 await api.delete(`/api/assignments/${assignmentId}`);
                 alert('Assignment deleted successfully.');
-                navigate(`/courses/${courseId}/assignments`);
+                navigate(`/assignments/${courseId}/listassignments`);
             } catch (error) {
                 setError('Failed to delete assignment.');
                 console.error('Delete error:', error);
@@ -78,7 +78,7 @@ function AssignmentPage() {
                     {assignment.assignment_file && (
                         <a href={assignment.assignment_file} target="_blank" rel="noopener noreferrer">Download Assignment File</a>
                     )}
-                    {assignment.solution_key_file && assignment.is_solution_key_available && (
+                    {assignment.solution_key_file && (!isStudent || assignment.is_solution_key_available) && (
                         <a href={assignment.solution_key_file} target="_blank" rel="noopener noreferrer">Download Solution Key</a>
                     )}
                     
