@@ -1,15 +1,11 @@
 from django.db.utils import IntegrityError
-from rest_framework import viewsets, exceptions, mixins
+from rest_framework import viewsets, exceptions
 from rest_framework.response import Response
 from api import models, serializers
 from django.core.mail import send_mail
 from django.conf import settings
 
-class AssignmentViewSet(mixins.CreateModelMixin,
-                        mixins.RetrieveModelMixin,
-                        mixins.UpdateModelMixin,
-                        mixins.DestroyModelMixin,
-                        viewsets.GenericViewSet):
+class AssignmentViewSet(viewsets.ModelViewSet):
     queryset = models.Assignment.objects.all()
     serializer_class = serializers.AssignmentUpdateSerializer
 
@@ -30,6 +26,8 @@ class AssignmentViewSet(mixins.CreateModelMixin,
             return serializers.AssignmentCreateSerializer
         elif self.action == 'retrieve':
             return serializers.AssignmentRetrieveSerializer
+        elif self.action == 'list':
+            return serializers.AssignmentListSerializer
         elif self.action == 'update':
             return serializers.AssignmentUpdateSerializer
         else:
