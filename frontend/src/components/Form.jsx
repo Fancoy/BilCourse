@@ -126,6 +126,17 @@ function Form({ route, method }) {
                 <button className="form-button" type="submit">
                     {name}
                 </button>
+
+                {isLogin ? (
+                    
+                    <p>
+                        Don't have an account? <a href="/register">Register</a>
+                    </p>
+                ) : (
+                    <p>
+                        Already have an account? <a href="/login">Login</a>
+                    </p>
+                )}
             </form>
 
             {!isLogin && (
