@@ -37,7 +37,8 @@ function CoursePage() {
             // Fetch assignments for the course
             api.get(`/api/assignments?course=${courseId}`)
                 .then((response) => {
-                    const transformedAssignments = response.data.map(assignment => ({
+                    const filteredAssignments = response.data.filter(assignment => assignment.course === parseInt(courseId));
+                    const transformedAssignments = filteredAssignments.map(assignment => ({
                         id: assignment.id,
                         title: assignment.title,
                         start: new Date(assignment.end_time).toISOString().split('T')[0],
@@ -174,8 +175,6 @@ function CoursePage() {
     if (!course) return <p className="course-loading">Loading...</p>;
     const studentExists = course.students.some(student => student.email === currentUserEmail);
 
-    const isTA = course.assistants && course.assistants.some(assistant => assistant.email === currentUserEmail);
-
     return (
         <div className="coursePage">
             <Grid container spacing={2}>
@@ -265,19 +264,15 @@ function CoursePage() {
                                     <button type="button" onClick={stopEditing}>Cancel</button>
                                 </form>
                             </div>
-                        )}                                        
-                        { (studentExists || userRole === 'instructor' || isTA) &&(
-                            <div>
-                                <button onClick={() => navigate(`/assignments/${courseId}/listassignments`)}>View Assignments</button>
-                                <button onClick={goToChatRoom}>Chat</button>
-                                <button onClick={goToActivities}>Activities</button>
-                                <button onClick={goToForums}>Forums</button>
-                            </div>
                         )}
                         {userRole === 'student' && (
                             <div className="enroll-leave-buttons">
                                 {studentExists ? (
                                     <div>
+                                        <button onClick={() => navigate(`/assignments/${courseId}/listassignments`)}>View Assignments</button>
+                                        <button onClick={goToChatRoom}>Chat</button>
+                                        <button onClick={goToActivities}>Activities</button>
+                                        <button onClick={goToForums}>Forums</button>
                                         <button onClick={() => leaveCourse(course.id)}>Leave Course</button>
                                     </div>
                                 ) : (

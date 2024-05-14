@@ -12,16 +12,35 @@ function MainPage() {
     const [error, setError] = useState(null);
 
     useEffect(() => {
-        const fetchAssignments = async () => {
+        const fetchUserProfile = async () => {
             try {
-                const response = await api.get('/api/assignments');
-                console.log(response.data);
-                const transformedAssignments = response.data.map(assignment => ({
+                const response = await api.get('/api/profile/');
+                const profile = response.data;
+
+                const courseIds = [
+                    ...profile.courses.map(course => course.id),
+                    ...profile.assisting.map(course => course.id),
+                    ...profile.teaching.map(course => course.id)
+                ];
+
+                const fetchAssignments = async () => {
+                    try {
+                        const response = await api.get('/api/assignments');
+                        return response.data.filter(assignment => courseIds.includes(assignment.course));
+                    } catch (error) {
+                        console.error('Error fetching assignments:', error);
+                        return [];
+                    }
+                };
+
+                const assignments = await fetchAssignments();
+                const transformedAssignments = assignments.map(assignment => ({
                     id: assignment.id,
                     title: assignment.title,
-                    start: new Date(assignment.end_time).toISOString().split('T')[0], // Use end_time and format date
-                    extendedProps: { courseId: assignment.course } // Include courseId for navigation
+                    start: new Date(assignment.end_time).toISOString().split('T')[0],
+                    extendedProps: { courseId: assignment.course }
                 }));
+
                 setEvents(transformedAssignments);
                 setLoading(false);
             } catch (error) {
@@ -30,7 +49,7 @@ function MainPage() {
             }
         };
 
-        fetchAssignments();
+        fetchUserProfile();
     }, []);
 
     if (loading) {
