@@ -175,7 +175,6 @@ function CoursePage() {
                         <p className="course-instructor">Instructor: {course.instructor?.email}</p>
                         <p className="course-description">{course.description}</p>
                         <p className="course-info">Capacity: {course.capacity}</p>
-                        <button onClick={() => navigate(`/assignments/${courseId}/listassignments`)}>View Assignments</button>
                         {course.assistants && course.assistants.length > 0 && (
                             <>
                                 <h4>Assistants</h4>
@@ -257,16 +256,20 @@ function CoursePage() {
                         {userRole === 'student' && (
                             <div className="enroll-leave-buttons">
                                 {studentExists ? (
-                                    <button onClick={() => leaveCourse(course.id)}>Leave Course</button>
+                                    <div>
+                                        <button onClick={() => navigate(`/assignments/${courseId}/listassignments`)}>View Assignments</button>
+                                        <button onClick={goToChatRoom}>Chat</button>
+                                        <button onClick={goToActivities}>Activities</button>
+                                        <button onClick={goToForums}>Forums</button>
+                                        <button onClick={() => leaveCourse(course.id)}>Leave Course</button>
+                                    </div>
                                 ) : (
                                     <button onClick={() => enrollInCourse(course.id)}>Enroll</button>
                                 )}
                             </div>
                         )}
                         
-                        <button onClick={goToChatRoom}>Chat</button>
-                        <button onClick={goToActivities}>Activities</button>
-                        <button onClick={goToForums}>Forums</button>
+                        
 
                     </div>
                 </Grid>
