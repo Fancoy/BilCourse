@@ -39,7 +39,8 @@ class StudentAssignment(models.Model):
     assignment = models.ForeignKey(Assignment, on_delete=models.CASCADE, related_name='assignment_students')
     upload_time = models.DateTimeField(default=timezone.now)
     result_file = models.FileField(upload_to='student_assignment_results/')
-    grade = models.CharField(max_length=2, blank=True, null=True)
+    feedback_file = models.FileField(upload_to='student_assignment_feedback/', blank=True, null=True)
+    grade = models.IntegerField(blank=True, null=True)
 
     def __str__(self):
         return f"{self.assignment.title} by {self.student.email}"

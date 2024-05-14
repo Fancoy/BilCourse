@@ -58,6 +58,10 @@ function AssignmentPage() {
         navigate(`/student-assignments/${studentAssignmentId}/details`);
     };
 
+    const handleSubmit = (courseId, assignmentId) => {
+        navigate(`/assignments/${courseId}/${assignmentId}/submitassignment`);
+    };
+
     const isStudent = user && user.user.account_type === 'student';
 
     const displayedAssignments = isStudent ? studentAssignments.filter(sa => sa.student_email === user.user.email) : studentAssignments;
@@ -101,6 +105,12 @@ function AssignmentPage() {
                                 </li>
                             ))}
                         </ul>
+                        {isStudent && displayedAssignments.length < 1 ? 
+                            (<div>
+                            <button onClick={() =>handleSubmit(courseId, assignmentId)}>Submit Assignment</button>
+                            </div>)
+                            : null
+                        }
                     </div>
                 </div>
             ) : (
