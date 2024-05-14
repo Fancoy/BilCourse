@@ -14,8 +14,8 @@ function MainPage() {
     useEffect(() => {
         const fetchAssignments = async () => {
             try {
-                const response = await api.get('/api/assignments'); // Replace with the URL of your backend API
-                console.log(response.data); // Log the response data
+                const response = await api.get('/api/assignments');
+                console.log(response.data);
                 const transformedAssignments = response.data.map(assignment => ({
                     id: assignment.id,
                     title: assignment.title,

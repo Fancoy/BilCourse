@@ -37,9 +37,6 @@ function Sidebar() {
       <SideBarOption text="Profile" Icon={AccountCircleIcon} />
       <SideBarOption text="Messages" Icon={ForumIcon} />
       <SideBarOption text="Search" Icon={SearchIcon} />
-      <SideBarOption text="Calendar" Icon={EventIcon} />
-
-
 
       {/* Instructor Options */}
       {userRole === 'instructor' && (

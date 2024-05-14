@@ -12,7 +12,7 @@ function Home() {
     const handleViewChange = (newView) => {
         setView(newView);
     };
-
+    
     useEffect(() => {
         getCourses();
         fetchUserRole();
@@ -65,7 +65,7 @@ function Home() {
                 <div className="courses-container">
                     {courses.map((course) => (
                         <div key={course.id}>
-                            <Course course={course} />                            
+                            <Course course={course} isHomePage={true} />                            
                         </div>
                     ))}
                 </div>
@@ -77,7 +77,7 @@ function Home() {
                     <div className="courses-container">
                         {availableCourses.map((course) => (
                             <div key={course.id}>
-                                <Course course={course} /> {/* Assuming you have a Course component */}
+                                <Course course={course} isHomePage={true}/>
                             </div>
                         ))}
                     </div>

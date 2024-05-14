@@ -68,7 +68,7 @@ function Room() {
   const [messages, setMessages] = useState([]);
   const messageInputRef = useRef(null);
   const socketRef = useRef(null);
-  const token = localStorage.getItem(ACCESS_TOKEN); // Make sure this is dynamically retrieved, e.g., from localStorage
+  const token = localStorage.getItem(ACCESS_TOKEN);
   const navigate = useNavigate();
 
   useEffect(() => {
