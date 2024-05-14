@@ -17,8 +17,10 @@ function MainPage() {
                 const response = await api.get('/api/assignments'); // Replace with the URL of your backend API
                 console.log(response.data); // Log the response data
                 const transformedAssignments = response.data.map(assignment => ({
+                    id: assignment.id,
                     title: assignment.title,
                     start: new Date(assignment.end_time).toISOString().split('T')[0], // Use end_time and format date
+                    extendedProps: { courseId: assignment.course } // Include courseId for navigation
                 }));
                 setEvents(transformedAssignments);
                 setLoading(false);

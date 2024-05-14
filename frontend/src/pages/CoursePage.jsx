@@ -1,26 +1,24 @@
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import Grid from '@mui/material/Grid';
 import SideBar from '../components/Sidebar';
 import Calendar from '../components/Calendar';
 import api from '../api';
-import { useNavigate } from 'react-router-dom';
 import '../styles/CoursePage.css';
 
 function CoursePage() {
-    const { courseId } = useParams(); // Extract courseId from the URL
+    const { courseId } = useParams();
     const [course, setCourse] = useState(null);
     const [error, setError] = useState(null);
     const [userRole, setUserRole] = useState('');
     const [taEmail, setTaEmail] = useState('');
-    const [courses, setCourses] = useState([]);
     const [currentUserEmail, setCurrentUserEmail] = useState('');
     const [isEditing, setIsEditing] = useState(false);
     const [editCourseId, setEditCourseId] = useState(null);
     const [capacity, setCapacity] = useState("");
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
-    const [events, setEvents] = useState([]); // Add state for events
+    const [events, setEvents] = useState([]);
 
     const navigate = useNavigate();
 
@@ -29,7 +27,7 @@ function CoursePage() {
             api.get(`/api/courses/${courseId}`)
                 .then((res) => {
                     setCourse(res.data);
-                    setError(null); // Clear errors if data fetched successfully
+                    setError(null);
                 })
                 .catch((err) => {
                     setError('Error fetching course data');
@@ -40,8 +38,10 @@ function CoursePage() {
             api.get(`/api/assignments?course=${courseId}`)
                 .then((response) => {
                     const transformedAssignments = response.data.map(assignment => ({
+                        id: assignment.id,
                         title: assignment.title,
-                        start: new Date(assignment.end_time).toISOString().split('T')[0], // Use end_time and format date
+                        start: new Date(assignment.end_time).toISOString().split('T')[0],
+                        extendedProps: { courseId: courseId } // Correctly set courseId
                     }));
                     setEvents(transformedAssignments);
                 })
@@ -75,7 +75,7 @@ function CoursePage() {
     const goToCreateAssignment = () => {
         navigate(`/assignments/${courseId}/createassignment`);
     };
-    
+
     const fetchCurrentUserEmail = () => {
         api.get("/api/user/")
             .then((response) => {
@@ -118,7 +118,6 @@ function CoursePage() {
     };
 
     const enrollInCourse = (courseId) => {
-        // Function to enroll the current user in a course
         api.post(`/api/courses/${courseId}/enroll`)
             .then((res) => {
                 if (res.status === 200) {
@@ -149,7 +148,7 @@ function CoursePage() {
         setEditCourseId(course.id);
         setTitle(course.title);
         setDescription(course.description);
-        setCapacity(course.capacity.toString());  // Ensure capacity is a string for the input field
+        setCapacity(course.capacity.toString());
     };
 
     const stopEditing = () => {
@@ -171,21 +170,16 @@ function CoursePage() {
             .catch((err) => alert(JSON.stringify(err.response.data)));
     };
 
-    // Check for errors or loading state
     if (error) return <p className="course-error">{error}</p>;
     if (!course) return <p className="course-loading">Loading...</p>;
     const studentExists = course.students.some(student => student.email === currentUserEmail);
-    console.log(studentExists);
-    console.log(currentUserEmail);
-    // Grid Layout with Sidebar
+
     return (
         <div className="coursePage">
             <Grid container spacing={2}>
-                {/* Sidebar */}
                 <Grid item xs={3}>
                     <SideBar />
                 </Grid>
-                {/* Course Content */}
                 <Grid item xs={6}>
                     <div className="course-content">
                         <h1 className="course-title">{course.title}</h1>
@@ -213,21 +207,21 @@ function CoursePage() {
                             </>
                         )}
                         {userRole === 'instructor' && (
-                                <>
-                                    <button onClick={() => startEditing(course)}>Edit</button>
-                                    <button onClick={() => deleteCourse(course.id)}>Delete</button>
-                                    <input 
-                                        type="email" 
-                                        placeholder="Assign TA by email" 
-                                        value={taEmail}
-                                        onChange={(e) => setTaEmail(e.target.value)} 
-                                    />
-                                    <button onClick={() => assignTA(course.id)}>Assign TA</button>
-                                    <button onClick={goToCreateActivity}>Create Activity</button>
-                                    <button onClick={goToCreateAssignment}>Create Assignment</button>
-                                    <button onClick={goToCreateForum}>Create Forum</button>
-                                </>
-                            )}                    
+                            <>
+                                <button onClick={() => startEditing(course)}>Edit</button>
+                                <button onClick={() => deleteCourse(course.id)}>Delete</button>
+                                <input 
+                                    type="email" 
+                                    placeholder="Assign TA by email" 
+                                    value={taEmail}
+                                    onChange={(e) => setTaEmail(e.target.value)} 
+                                />
+                                <button onClick={() => assignTA(course.id)}>Assign TA</button>
+                                <button onClick={goToCreateActivity}>Create Activity</button>
+                                <button onClick={goToCreateAssignment}>Create Assignment</button>
+                                <button onClick={goToCreateForum}>Create Forum</button>
+                            </>
+                        )}                    
                         {userRole === 'instructor' && isEditing && (
                             <div className="form-container">
                                 <h2>Edit Course</h2>
@@ -287,7 +281,6 @@ function CoursePage() {
                         )}
                     </div>
                 </Grid>
-                {/* Calendar */}
                 <Grid item xs={3}>
                     <Calendar events={events} />
                 </Grid>

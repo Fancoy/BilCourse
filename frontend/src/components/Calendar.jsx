@@ -1,15 +1,23 @@
 import React from 'react';
 import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
+import { useNavigate } from 'react-router-dom';
 
 function Calendar({ events }) {
-    const renderEventContent = (eventInfo) => {
-        return (
-            <>
-                <b>{eventInfo.timeText}</b>
-                <i>{eventInfo.event.title}</i>
-            </>
-        );
+    const navigate = useNavigate();
+
+    const handleEventClick = (clickInfo) => {
+        const assignmentId = clickInfo.event.id;
+        const courseId = clickInfo.event.extendedProps.courseId;
+
+        console.log('Assignment ID:', assignmentId);
+        console.log('Course ID:', courseId);
+
+        if (courseId && assignmentId) {
+            navigate(`/assignments/${courseId}/${assignmentId}`);
+        } else {
+            console.error('Missing courseId or assignmentId');
+        }
     };
 
     return (
@@ -17,8 +25,8 @@ function Calendar({ events }) {
             plugins={[dayGridPlugin]}
             initialView="dayGridMonth"
             events={events}
-            eventContent={renderEventContent}
             displayEventTime={false}
+            eventClick={handleEventClick}
         />
     );
 }
