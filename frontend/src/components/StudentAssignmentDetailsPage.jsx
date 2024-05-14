@@ -8,9 +8,9 @@ function StudentAssignmentDetailsPage() {
     const [studentAssignment, setStudentAssignment] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
-    const navigate = useNavigate();
     const [user, setUser] = useState(null);
-
+    const [grade, setGrade] = useState('');
+    const navigate = useNavigate();
 
     useEffect(() => {
         async function fetchStudentAssignment() {
@@ -41,6 +41,25 @@ function StudentAssignmentDetailsPage() {
         }
     };
 
+    const handleGradeChange = (event) => {
+        setGrade(event.target.value);
+    };
+
+    const handleGradeSubmit = async () => {
+        if (grade) {
+            try {
+                const response = await api.patch(`/api/student-assignments/${studentAssignmentId}/edit-grade`, { grade });
+                alert(`Grade updated to ${response.data.grade}`);
+                setStudentAssignment({...studentAssignment, grade: response.data.grade}); // Update the local state to reflect the new grade
+            } catch (err) {
+                console.error('Error updating grade:', err);
+                setError('Failed to update grade.');
+            }
+        } else {
+            alert('Please enter a grade before submitting.');
+        }
+    };
+
     if (loading) return <p>Loading...</p>;
     if (error) return <p>Error: {error}</p>;
 
@@ -51,12 +70,12 @@ function StudentAssignmentDetailsPage() {
     return (
         <div>
             <h1>Assignment Details</h1>
-            {console.log(grader)}
             {assignment && (
                 <div>
                     <h2>Title: {assignment.title}</h2>
                     <p>Description: {assignment.description}</p>
                     <p>Due Date: {new Date(assignment.end_time).toLocaleString()}</p>
+                    {studentAssignment.grade && <p>Grade: {studentAssignment.grade}</p>}
                 </div>
             )}
             {studentAssignment ? (
@@ -64,6 +83,12 @@ function StudentAssignmentDetailsPage() {
                     <h3>Submitted Assignment</h3>
                     <a href={studentAssignment.result_file} target="_blank" rel="noopener noreferrer">View Submitted File</a>
                     {submitter ? (<button onClick={() => navigate(`/assignments/edit/${studentAssignmentId}`)}>Edit Submission</button>) : (<></>)}
+                    {grader && (
+                        <div>
+                            <input type="text" value={grade} onChange={handleGradeChange} placeholder="Enter grade" />
+                            <button onClick={handleGradeSubmit}>Submit Grade</button>
+                        </div>
+                    )}
                 </div>
             ) : (
                 <p>No submission found.</p>
