@@ -70,6 +70,17 @@ function StudentAssignmentDetailsPage() {
         setIsEditModalOpen(false);
     };
 
+    const handleDeleteSubmission = async () => {
+        try {
+            await api.delete(`/api/student-assignments/${studentAssignmentId}/delete`);
+            alert('Submission deleted successfully.');
+            navigate('/assignments'); // Navigate to the assignments list or any other appropriate page
+        } catch (err) {
+            console.error('Error deleting submission:', err);
+            setError('Failed to delete submission.');
+        }
+    };
+
     if (loading) return <p>Loading...</p>;
     if (error) return <p>Error: {error}</p>;
 
@@ -88,6 +99,7 @@ function StudentAssignmentDetailsPage() {
                     {studentAssignment.grade && <p>Grade: {studentAssignment.grade}</p>}
                 </div>
             )}
+            
             {studentAssignment ? (
                 <div>
                     <h3>Submitted Assignment</h3>
@@ -95,6 +107,7 @@ function StudentAssignmentDetailsPage() {
                     {submitter ? (
                         <>
                             <button onClick={handleOpenEditModal}>Edit Submission</button>
+                            <button onClick={handleDeleteSubmission}>Delete Submission</button>
                             <EditSubmissionModal 
                                 isOpen={isEditModalOpen} 
                                 onClose={handleCloseEditModal} 
