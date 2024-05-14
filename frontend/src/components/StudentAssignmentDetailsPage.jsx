@@ -74,7 +74,7 @@ function StudentAssignmentDetailsPage() {
         try {
             await api.delete(`/api/student-assignments/${studentAssignmentId}/delete`);
             alert('Submission deleted successfully.');
-            navigate('/assignments'); // Navigate to the assignments list or any other appropriate page
+            navigate('/home'); // Navigate to the assignments list or any other appropriate page
         } catch (err) {
             console.error('Error deleting submission:', err);
             setError('Failed to delete submission.');

@@ -181,7 +181,7 @@ class StudentAssignmentViewSet(viewsets.ModelViewSet):
     filterset_fields = ['student', 'assignment', 'grade']
     search_fields = ['student__email', 'assignment__title']
     ordering_fields = ['upload_time', 'grade']
-    permission_classes = [AllowAny]
+    permission_classes = [permissions.IsAuthenticated]
 
     @action(detail=True, url_path='details', methods=['get'])
     def get_student_assignment_details(self, request, pk=None):
