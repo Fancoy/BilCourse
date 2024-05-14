@@ -62,7 +62,7 @@ function AssignmentPage() {
         navigate(`/assignments/${courseId}/${assignmentId}/submitassignment`);
     };
 
-    const isStudent = user && user.user.account_type === 'student';
+    const isStudent = user && user.user.account_type === 'student' && course.assistants.filter(assistant => assistant.email === user.user.email).length < 1;
 
     const displayedAssignments = isStudent ? studentAssignments.filter(sa => sa.student_email === user.user.email) : studentAssignments;
 

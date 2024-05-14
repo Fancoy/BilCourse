@@ -83,7 +83,7 @@ function StudentAssignmentDetailsPage() {
                     <h3>Submitted Assignment</h3>
                     <a href={studentAssignment.result_file} target="_blank" rel="noopener noreferrer">View Submitted File</a>
                     {submitter ? (<button onClick={() => navigate(`/assignments/edit/${studentAssignmentId}`)}>Edit Submission</button>) : (<></>)}
-                    {grader && (
+                    {!submitter && (
                         <div>
                             <input type="text" value={grade} onChange={handleGradeChange} placeholder="Enter grade" />
                             <button onClick={handleGradeSubmit}>Submit Grade</button>
