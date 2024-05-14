@@ -170,19 +170,28 @@ class SearchUserView(generics.ListAPIView):
         return models.User.objects.all()
     
 
-class StudentAssignmentPagination(PageNumberPagination):
-    page_size = 10  # Number of assignments per page
+#class StudentAssignmentPagination(PageNumberPagination):
+ #   page_size = 10  # Number of assignments per page
 
 class StudentAssignmentViewSet(viewsets.ModelViewSet):
     queryset = StudentAssignment.objects.all()
     serializer_class = StudentAssignmentSerializer
-    pagination_class = StudentAssignmentPagination
+    #pagination_class = StudentAssignmentPagination
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
     filterset_fields = ['student', 'assignment', 'grade']
     search_fields = ['student__email', 'assignment__title']
     ordering_fields = ['upload_time', 'grade']
     permission_classes = [AllowAny]
 
+    @action(detail=True, url_path='details', methods=['get'])
+    def get_student_assignment_details(self, request, pk=None):
+        """
+        Retrieve details of a specific student assignment using its PK.
+        """
+        student_assignment = get_object_or_404(StudentAssignment, pk=pk)
+        serializer = self.get_serializer(student_assignment)
+        return Response(serializer.data)
+    
     # Custom action to get assignments for a specific student
     @action(detail=False, methods=['get'], url_path='student-assignments/(?P<student_id>\d+)')
     def get_assignments_by_student(self, request, student_id=None):

@@ -75,6 +75,7 @@ function CreateAssignment () {
                 });
                 if (res.status === 201) {
                     alert('Assignment created!');
+                    navigate(-1); // Go back to the previous page
                 } else {
                     alert('Failed to create assignment.');
                 }
