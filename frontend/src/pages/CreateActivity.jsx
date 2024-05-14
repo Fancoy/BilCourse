@@ -19,7 +19,7 @@ function CreateActivity() {
         title,
         description,
         date,
-        course: courseId  // This line is generally not necessary with your current backend logic
+        course: courseId 
         });
       if (res.status === 201) {
         alert('Activity created successfully!');

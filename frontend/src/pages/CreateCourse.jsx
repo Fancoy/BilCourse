@@ -39,8 +39,7 @@ function CreateCourse() {
         const res = await api.post('/api/courses', { title, description, capacity });
         if (res.status === 201) {
           alert('Course created!');
-          // You might want to navigate the user to another page here, e.g.:
-          // navigate('/courses');
+            navigate('/home');
         } else {
           alert('Failed to create course.');
         }

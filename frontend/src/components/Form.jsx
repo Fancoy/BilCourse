@@ -128,7 +128,6 @@ function Form({ route, method }) {
                 </button>
 
                 {isLogin ? (
-                    
                     <p>
                         Don't have an account? <a href="/register">Register</a>
                     </p>

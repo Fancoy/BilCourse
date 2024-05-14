@@ -5,7 +5,7 @@ import { ACCESS_TOKEN } from '../../src/constants';
 
 function UserProfile() {
     const navigate = useNavigate();
-    const { email } = useParams(); // Assuming you're using React Router and the email is part of the URL
+    const { email } = useParams();
     const [user, setUser] = useState(null);
     const [error, setError] = useState('');
     const [myEmail, setMyEmail] = useState(null);
@@ -15,12 +15,12 @@ function UserProfile() {
             try {
                 const response = await axios.get(`http://127.0.0.1:8000/api/users/${email}/`, {
                     headers: {
-                        Authorization: `Bearer ${localStorage.getItem(ACCESS_TOKEN)}` // Assuming token-based authentication
+                        Authorization: `Bearer ${localStorage.getItem(ACCESS_TOKEN)}`
                     }
                 });
                 const myInfo = await axios.get(`http://127.0.0.1:8000/api/user/`, {
                     headers: {
-                        Authorization: `Bearer ${localStorage.getItem(ACCESS_TOKEN)}` // Assuming token-based authentication
+                        Authorization: `Bearer ${localStorage.getItem(ACCESS_TOKEN)}`
                     }
                 });
                 setUser(response.data);

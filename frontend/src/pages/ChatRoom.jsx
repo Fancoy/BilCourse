@@ -4,7 +4,7 @@ function ChatRoom() {
     const [message, setMessage] = useState('');
     const [chatLog, setChatLog] = useState([]);
     const [ws, setWs] = useState(null);
-    const roomName = 1;  // This should be dynamic based on your application needs
+    const roomName = 1;
 
     useEffect(() => {
         const newWebSocket = new WebSocket('ws://http://127.0.0.1:8000//ws/chat/${roomName}/');

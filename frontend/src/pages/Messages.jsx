@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import api from "../api"; // Ensure this is correctly imported based on your setup
+import api from "../api";
 
 function Messages() {
     const [chats, setChats] = useState([]);
