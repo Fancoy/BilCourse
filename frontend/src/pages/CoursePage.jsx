@@ -1,4 +1,3 @@
-// File: src/pages/CoursePage.jsx
 import { useParams } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import Grid from '@mui/material/Grid';
@@ -21,6 +20,7 @@ function CoursePage() {
     const [capacity, setCapacity] = useState("");
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
+    const [events, setEvents] = useState([]); // Add state for events
 
     const navigate = useNavigate();
 
@@ -35,6 +35,20 @@ function CoursePage() {
                     setError('Error fetching course data');
                     console.error(err);
                 });
+
+            // Fetch assignments for the course
+            api.get(`/api/assignments?course=${courseId}`)
+                .then((response) => {
+                    const transformedAssignments = response.data.map(assignment => ({
+                        title: assignment.title,
+                        start: new Date(assignment.end_time).toISOString().split('T')[0], // Use end_time and format date
+                    }));
+                    setEvents(transformedAssignments);
+                })
+                .catch((err) => {
+                    setError('Error fetching assignments');
+                    console.error(err);
+                });
         }
     }, [courseId]);
 
@@ -45,12 +59,15 @@ function CoursePage() {
     const goToActivities = () => {
         navigate(`/courses/${courseId}/listactivities`);
     };
+
     const goToForums = () => {
         navigate(`/courses/${courseId}/listforums`);
     };
+
     const goToCreateActivity = () => {
         navigate(`/courses/${courseId}/createactivity`);
     };
+
     const goToCreateForum = () => {
         navigate(`/courses/${courseId}/createforum`);
     };
@@ -268,14 +285,11 @@ function CoursePage() {
                                 )}
                             </div>
                         )}
-                        
-                        
-
                     </div>
                 </Grid>
                 {/* Calendar */}
                 <Grid item xs={3}>
-                    <Calendar />
+                    <Calendar events={events} />
                 </Grid>
             </Grid>
         </div>
