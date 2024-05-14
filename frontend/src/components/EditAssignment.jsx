@@ -1,105 +1,75 @@
 import React, { useState, useEffect } from 'react';
-import api from '../api';  // Make sure this path matches your actual API module
+import api from '../api';
 
-function EditAssignment({ assignment, onClose, onSave }) {
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
-    const [title, setTitle] = useState(assignment.title);
-    const [description, setDescription] = useState(assignment.description);
-    const [solutionKeyStatus, setSolutionKeyStatus] = useState(assignment.is_solution_key_available);
-    const [editAssignmentFile, setEditAssignmentFile] = useState(null);
-    const token = localStorage.getItem('token');
+const EditAssignmentModal = ({ isOpen, onClose, assignmentId }) => {
+    const [file, setFile] = useState(null);
+    const [uploading, setUploading] = useState(false);
+    const [currentFile, setCurrentFile] = useState(null);
 
     useEffect(() => {
-        if (assignment) {
-            setLoading(false);  // Assuming assignment is passed as a prop and is loaded
+        if (isOpen) {
+            fetchCurrentFile();
         }
-    }, [assignment]);
+    }, [isOpen]);
 
-    console.log(assignment.id);
-
-    const handleFileChange = (event) => {
-        setEditAssignmentFile(event.target.files[0]);
-    };
-
-    const handleSubmit = async (event) => {
-        event.preventDefault();
-        if (!title || !description) {
-            alert("Please fill in all fields");
-            return;
-        }
-
-        const formData = new FormData();
-        formData.append('title', title);
-        formData.append('description', description);
-        formData.append('is_solution_key_available', solutionKeyStatus);
-        if (editAssignmentFile) {
-            formData.append('assignment_file', editAssignmentFile);
-        }
-
+    const fetchCurrentFile = async () => {
         try {
-            const response = await api.patch(`/api/assignments/${assignment.id}/`, formData, {
+            const authToken = localStorage.getItem('authToken');  // Retrieve the token from localStorage
+            const response = await api.get(`/api/student-assignments/${assignmentId}/`, {
                 headers: {
-                    'Content-Type': 'multipart/form-data',
-                    'Authorization': `Bearer ${token}`
+                    'Authorization': `Bearer ${authToken}`  // Include the token in the headers
                 }
             });
-            alert('Assignment updated successfully!');
-            console.log(response.data);  // Logging the response to see the updated assignment
+            setCurrentFile(response.data.result_file);  // Adjust based on the actual response structure
         } catch (error) {
-            console.error('Failed to update assignment:', error);
-            setError(error);
+            console.error('Error fetching current file:', error.response ? error.response.data : error.message);
         }
     };
 
-    if (loading) {
-        return <p>Loading...</p>;
-    }
+    const handleFileChange = (e) => {
+        setFile(e.target.files[0]);
+    };
 
-    if (error) {
-        return <p>Error: {error.message}</p>;
-    }
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        if (!file) return;
+
+        const formData = new FormData();
+        formData.append('result_file', file);
+
+        setUploading(true);
+
+        try {
+            const authToken = localStorage.getItem('authToken');  // Retrieve the token from localStorage
+            const response = await api.patch(`/api/student-assignments/${assignmentId}/`, formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                    'Authorization': `Bearer ${authToken}`  // Include the token in the headers
+                }
+            });
+            console.log('File updated successfully:', response.data);
+            onClose();
+        } catch (error) {
+            console.error('Error updating file:', error.response ? error.response.data : error.message);
+        } finally {
+            setUploading(false);
+        }
+    };
+
+    if (!isOpen) return null;
 
     return (
-        <div>
-            <h1>Edit Assignment</h1>
-            <form onSubmit={handleSubmit}>
-                <label htmlFor="title">Title:</label>
-                <input
-                    id="title"
-                    type="text"
-                    value={title}
-                    onChange={(e) => setTitle(e.target.value)}
-                />
-
-                <label htmlFor="description">Description:</label>
-                <textarea
-                    id="description"
-                    value={description}
-                    onChange={(e) => setDescription(e.target.value)}
-                />
-
-                <label htmlFor="assignment_file">Assignment File:</label>
-                <input
-                    id="assignment_file"
-                    type="file"
-                    onChange={handleFileChange}
-                />
-
-                <label htmlFor="solution_key_status">Solution Key Available:</label>
-                <select
-                    id="solution_key_status"
-                    value={solutionKeyStatus}
-                    onChange={(e) => setSolutionKeyStatus(e.target.value === 'true')}
-                >
-                    <option value="true">Yes</option>
-                    <option value="false">No</option>
-                </select>
-
-                <button type="submit">Save Changes</button>
-            </form>
+        <div className="modal">
+            <div className="modal-content">
+                <span className="close" onClick={onClose}>&times;</span>
+                <form onSubmit={handleSubmit}>
+                    <input type="file" onChange={handleFileChange} />
+                    <button type="submit" disabled={uploading}>{uploading ? 'Updating...' : 'Submit'}</button>
+                </form>
+                {currentFile && <p>Current File: {currentFile}</p>}
+            </div>
         </div>
     );
-}
+};
 
-export default EditAssignment;
+export default EditAssignmentModal;

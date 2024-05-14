@@ -10,6 +10,12 @@ from .serializers import UserSerializer, VerifyEmailSerializer
 from .models import User
 from rest_framework.permissions import AllowAny
 import logging
+from rest_framework import viewsets, filters, permissions
+from rest_framework.pagination import PageNumberPagination
+from django_filters.rest_framework import DjangoFilterBackend
+from .models import StudentAssignment
+from .serializers import StudentAssignmentSerializer
+from rest_framework.decorators import action
 
 def award_heavy_load_badge(user):
     courses_taken = models.Course.objects.filter(students=user).count()
@@ -162,4 +168,71 @@ class SearchUserView(generics.ListAPIView):
                 email__icontains=query
             )
         return models.User.objects.all()
+    
 
+#class StudentAssignmentPagination(PageNumberPagination):
+ #   page_size = 10  # Number of assignments per page
+
+class StudentAssignmentViewSet(viewsets.ModelViewSet):
+    queryset = StudentAssignment.objects.all()
+    serializer_class = StudentAssignmentSerializer
+    #pagination_class = StudentAssignmentPagination
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
+    filterset_fields = ['student', 'assignment', 'grade']
+    search_fields = ['student__email', 'assignment__title']
+    ordering_fields = ['upload_time', 'grade']
+    permission_classes = [AllowAny]
+
+    @action(detail=True, url_path='details', methods=['get'])
+    def get_student_assignment_details(self, request, pk=None):
+        """
+        Retrieve details of a specific student assignment using its PK.
+        """
+        student_assignment = get_object_or_404(StudentAssignment, pk=pk)
+        serializer = self.get_serializer(student_assignment)
+        return Response(serializer.data)
+    
+    # Custom action to get assignments for a specific student
+    @action(detail=False, methods=['get'], url_path='student-assignments/(?P<student_id>\d+)')
+    def get_assignments_by_student(self, request, student_id=None):
+        assignments = self.queryset.filter(student_id=student_id)
+        page = self.paginate_queryset(assignments)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+        serializer = self.get_serializer(assignments, many=True)
+        return Response(serializer.data)
+    
+    # Custom action to edit grade
+    @action(detail=True, methods=['patch'], url_path='edit-grade')
+    def edit_grade(self, request, pk=None):
+        assignment = self.get_object()
+        grade = request.data.get('grade')
+        if grade is not None:
+            assignment.grade = grade
+            assignment.save()
+            return Response({'status': 'grade updated', 'grade': grade}, status=status.HTTP_200_OK)
+        else:
+            return Response({'status': 'bad request', 'message': 'Grade not provided'}, status=status.HTTP_400_BAD_REQUEST)
+
+    # Custom action to get assignments by course
+    @action(detail=False, methods=['get'], url_path='course-assignments/(?P<course_id>\d+)')
+    def get_assignments_by_course(self, request, course_id=None):
+        assignments = self.queryset.filter(assignment__course_id=course_id)
+        page = self.paginate_queryset(assignments)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+        serializer = self.get_serializer(assignments, many=True)
+        return Response(serializer.data)
+    
+    # Custom action to get assignments by student and course
+    @action(detail=False, methods=['get'], url_path='student-course-assignments/(?P<student_id>\d+)/(?P<course_id>\d+)')
+    def get_assignments_by_student_and_course(self, request, student_id=None, course_id=None):
+        assignments = self.queryset.filter(student_id=student_id, assignment__course_id=course_id)
+        page = self.paginate_queryset(assignments)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+        serializer = self.get_serializer(assignments, many=True)
+        return Response(serializer.data)

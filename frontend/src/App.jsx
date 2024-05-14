@@ -22,6 +22,10 @@ import UserProfile from "./pages/UserProfile"
 import CreateForum from "./pages/CreateForum";
 import ListForums from "./pages/ListForums";
 import Forum from "./pages/Forum";
+import AssignmentPage from "./components/AssignmentPage"
+import EditAssignmentPage from "./components/EditAssignmentPage"
+import SubmitAssignmentPage from "./components/SubmitAssignmentPage"
+import StudentAssignmentDetailsPage from "./components/StudentAssignmentDetailsPage"
 
 function Logout() {
   localStorage.clear();
@@ -89,6 +93,14 @@ function App() {
             </ProtectedRoute>
           }
         />
+          <Route
+          path="/calendar"
+          element={
+            <ProtectedRoute>
+              <CalendarPage />
+            </ProtectedRoute>
+          }
+        />
         {/* <Route
           path="/calendar"
           element={
@@ -109,7 +121,11 @@ function App() {
         <Route path="/courses/:courseId/createactivity" element={<ProtectedRoute><CreateActivity /></ProtectedRoute>} />
         <Route path="/courses/:courseId/list-assignments" element={<ListAssignments />} />
         <Route path="/assignments/:courseId/createassignment" element={<ProtectedRoute><CreateAssignment /></ProtectedRoute>} />
-
+        <Route path="/assignments/:courseId/:assignmentId" element={<AssignmentPage />} />
+        <Route path="/edit-assignment/:assignmentId" element={<EditAssignmentPage />} />
+        <Route path="/assignments/:courseId/:assignmentId/submitassignment" element={<SubmitAssignmentPage />} />
+        <Route path="/student-assignments/:studentAssignmentId/details" element={<StudentAssignmentDetailsPage />} />
+        
         <Route path="/verify-email" element={<VerifyEmail />} /> {/* Add the VerifyEmail route */}
       </Routes>
     </BrowserRouter>

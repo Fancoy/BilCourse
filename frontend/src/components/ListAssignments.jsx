@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import { useParams, Link } from 'react-router-dom';
 import api from '../api';
-import { useParams } from 'react-router-dom';
 import EditAssignment from './EditAssignment';
 
 function ListAssignments() {
@@ -24,6 +24,7 @@ function ListAssignments() {
 
         fetchAssignments();
     }, [courseId]);
+
 
     const handleEditClick = (assignment) => {
         setEditingAssignment(assignment);
@@ -52,13 +53,14 @@ function ListAssignments() {
 
     return (
         <div>
-            <h1>Assignments</h1>
+            <h1>Assignments for Course ID: {courseId}</h1>
             {assignments.length > 0 ? (
                 <ul>
                     {assignments.map(assignment => (
                         <li key={assignment.id}>
                             <h2>{assignment.title}</h2>
                             <p>{assignment.description}</p>
+
                             {assignment.assignment_file && (
                                 <a href={assignment.assignment_file} target="_blank" rel="noopener noreferrer">Download Assignment File</a>
                             )}
@@ -66,6 +68,9 @@ function ListAssignments() {
                                 <a href={assignment.solution_key_file} target="_blank" rel="noopener noreferrer">Download Solution Key</a>
                             )}
                             <button onClick={() => handleEditClick(assignment)}>Edit Assignment</button>
+                            <Link to={`/assignments/${courseId}/${assignment.id}`}>
+                                View Assignment Details
+                            </Link>
                         </li>
                     ))}
                 </ul>
