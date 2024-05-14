@@ -214,6 +214,21 @@ class StudentAssignmentViewSet(viewsets.ModelViewSet):
             return Response({'status': 'grade updated', 'grade': grade}, status=status.HTTP_200_OK)
         else:
             return Response({'status': 'bad request', 'message': 'Grade not provided'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        # Custom action to edit grade
+    @action(detail=True, methods=['patch'], url_path='edit')
+    def edit_submission(self, request, pk=None):
+        assignment = self.get_object()
+        result_file = request.FILES.get('result_file')
+        
+        # Log the incoming data for debugging
+        logger.debug('Received file: %s', result_file)
+        if result_file is not None:
+            assignment.result_file = result_file
+            assignment.save()
+            return Response({'status': 'submission updated', 'result_file': assignment.result_file.url}, status=status.HTTP_200_OK)
+        else:
+            return Response({'status': 'bad request', 'message': 'File not provided'}, status=status.HTTP_400_BAD_REQUEST)
 
     # Custom action to get assignments by course
     @action(detail=False, methods=['get'], url_path='course-assignments/(?P<course_id>\d+)')

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import api from '../api';
+import EditSubmissionModal from './EditSubmissionModal';
 
 function StudentAssignmentDetailsPage() {
     const { studentAssignmentId } = useParams();
@@ -9,6 +10,7 @@ function StudentAssignmentDetailsPage() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
     const [user, setUser] = useState(null);
+    const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [grade, setGrade] = useState('');
     const navigate = useNavigate();
 
@@ -60,6 +62,14 @@ function StudentAssignmentDetailsPage() {
         }
     };
 
+    const handleOpenEditModal = () => {
+        setIsEditModalOpen(true);
+    };
+
+    const handleCloseEditModal = () => {
+        setIsEditModalOpen(false);
+    };
+
     if (loading) return <p>Loading...</p>;
     if (error) return <p>Error: {error}</p>;
 
@@ -82,7 +92,16 @@ function StudentAssignmentDetailsPage() {
                 <div>
                     <h3>Submitted Assignment</h3>
                     <a href={studentAssignment.result_file} target="_blank" rel="noopener noreferrer">View Submitted File</a>
-                    {submitter ? (<button onClick={() => navigate(`/assignments/edit/${studentAssignmentId}`)}>Edit Submission</button>) : (<></>)}
+                    {submitter ? (
+                        <>
+                            <button onClick={handleOpenEditModal}>Edit Submission</button>
+                            <EditSubmissionModal 
+                                isOpen={isEditModalOpen} 
+                                onClose={handleCloseEditModal} 
+                                studentAssignmentId={studentAssignmentId} 
+                            />
+                        </>
+                    ) : (<></>)}
                     {!submitter && (
                         <div>
                             <input type="text" value={grade} onChange={handleGradeChange} placeholder="Enter grade" />
