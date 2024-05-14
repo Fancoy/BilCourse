@@ -229,6 +229,20 @@ class StudentAssignmentViewSet(viewsets.ModelViewSet):
             return Response({'status': 'submission updated', 'result_file': assignment.result_file.url}, status=status.HTTP_200_OK)
         else:
             return Response({'status': 'bad request', 'message': 'File not provided'}, status=status.HTTP_400_BAD_REQUEST)
+        
+    @action(detail=True, methods=['patch'], url_path='add-feedback')
+    def edit_submission(self, request, pk=None):
+        assignment = self.get_object()
+        feedback_file = request.FILES.get('feedback_file')
+        
+        # Log the incoming data for debugging
+        logger.debug('Received file: %s', feedback_file)
+        if feedback_file is not None:
+            assignment.feedback_file = feedback_file
+            assignment.save()
+            return Response({'status': 'feedback submitted', 'feedback_file': assignment.feedback_file.url}, status=status.HTTP_200_OK)
+        else:
+            return Response({'status': 'bad request', 'message': 'File not provided'}, status=status.HTTP_400_BAD_REQUEST)
 
     # Custom action to get assignments by course
     @action(detail=False, methods=['get'], url_path='course-assignments/(?P<course_id>\d+)')
