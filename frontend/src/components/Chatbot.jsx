@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import api from '../api';
 import './css/Chatbot.css';
 
@@ -70,7 +71,7 @@ const Chatbot = () => {
             <div className="chatbot-messages">
                 {messages.map((message, index) => (
                     <div key={index} className={`message ${message.sender}`}>
-                        {message.text}
+                        <strong>{message.sender === 'user' ? 'User' : 'Chatbot'}:</strong> {message.text}
                     </div>
                 ))}
             </div>
