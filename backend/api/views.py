@@ -16,6 +16,42 @@ from django_filters.rest_framework import DjangoFilterBackend
 from .models import StudentAssignment
 from .serializers import StudentAssignmentSerializer
 from rest_framework.decorators import action
+from django.http import JsonResponse
+from rest_framework.decorators import api_view
+import openai
+import os
+
+logger = logging.getLogger(__name__)
+
+openai.api_key = os.getenv("OPENAI_API_KEY")
+
+@api_view(['POST'])
+def chat_with_ai(request):
+    user_message = request.data.get('message', '')
+    if not user_message:
+        return JsonResponse({'error': 'No message provided'}, status=400)
+    
+    try:
+        logger.debug("Received message from user: %s", user_message)
+        
+        # Send the prompt to the OpenAI API
+        response = openai.ChatCompletion.create(
+            model="gpt-3.5-turbo",
+            messages=[
+                {"role": "system", "content": "You are a helpful assistant."},
+                {"role": "user", "content": user_message},
+            ],
+            max_tokens=150,
+            n=1,
+            temperature=0.7,
+        )
+        logger.debug("OpenAI response: %s", response)
+
+        ai_message = response['choices'][0]['message']['content'].strip()
+        return JsonResponse({'message': ai_message})
+    except Exception as e:
+        logger.error("Error during OpenAI API call: %s", e)
+        return JsonResponse({'error': str(e)}, status=500)
 
 def award_heavy_load_badge(user):
     courses_taken = models.Course.objects.filter(students=user).count()

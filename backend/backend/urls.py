@@ -7,6 +7,7 @@ from api.views_api.chat_views_api import CreatePrivateChatView, ListUserChatsVie
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from drf_spectacular import views as spectacular_views
 from django.conf.urls.static import static
+from api.views import chat_with_ai
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -33,6 +34,7 @@ urlpatterns = [
     path('api/user_chats/', ListUserChatsView.as_view(), name='user_chats'),
     path('api/create_private_chat/', CreatePrivateChatView.as_view(), name='create_private_chat'),
     path("api/", include("api.urls")),  # Include the urls from the api app
+    path('api/chat', chat_with_ai, name='chat_with_ai'),
 
     # Add a catch-all pattern
     #re_path(r'^.*$', TemplateView.as_view(template_name='index.html'), name='home'), 
