@@ -6,7 +6,7 @@ from django.shortcuts import get_object_or_404
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from . import models, serializers  # Ensure these are imported correctly
-from .serializers import UserSerializer, VerifyEmailSerializer
+from .serializers import UserSerializer, VerifyEmailSerializer, CourseSerializer, ActivitySerializer, ForumListSerializer, ForumMessageSerializer, AssignmentSerializer, StudentAssignmentSerializer
 from .models import User
 from rest_framework.permissions import AllowAny
 import logging
@@ -29,6 +29,28 @@ logger = logging.getLogger(__name__)
 
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
+class UserCourseDetailView(APIView):
+
+    def get(self, request):
+        user = request.user
+        courses = models.Course.objects.filter(students = user)
+        activities = models.Activity.objects.filter(course__in=courses)
+        forums = models.Forum.objects.filter(course__in=courses)
+        forumMessages = models.ForumMessage.objects.filter(forum__in=forums)
+        assignments = models.Assignment.objects.filter(course__in=courses)
+        studentAssignments = StudentAssignment.objects.filter(assignment__in=assignments, student=user)
+
+        data = {
+            'courses': CourseSerializer(courses, many=True).data,
+            'activities': ActivitySerializer(activities, many=True).data,
+            'forums': ForumListSerializer(forums, many=True).data,
+            'forumMessages': ForumMessageSerializer(forumMessages, many=True).data,
+            'assignments': AssignmentSerializer(assignments, many=True).data,
+            'studentAssignments': StudentAssignmentSerializer(studentAssignments, many=True).data
+        }
+
+        return Response(data)
+    
 @api_view(['POST'])
 def chat_with_ai(request):
     user_message = request.data.get('message', '')

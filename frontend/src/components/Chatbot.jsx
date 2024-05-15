@@ -9,11 +9,13 @@ const Chatbot = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [graphData, setGraphData] = useState(null);
+    const [generalData, setGeneralData] = useState(null);
 
     useEffect(() => {
         const fetchAssignments = async () => {
             try {
                 const response = await api.get('/api/profile/');
+                const generalDataRes = await api.get('/user/details/');
                 const profile = response.data;
 
                 const courseIds = [
@@ -26,6 +28,7 @@ const Chatbot = () => {
                 const filteredAssignments = allAssignments.data.filter(assignment => courseIds.includes(assignment.course));
                 setAssignments(filteredAssignments);
                 setLoading(false);
+                setGeneralData(generalDataRes.data);
             } catch (error) {
                 setError(error);
                 setLoading(false);
@@ -40,12 +43,40 @@ const Chatbot = () => {
         setMessages([...messages, { sender: 'user', text: userMessage }]);
         setInput('');
 
-        // Prepare the prompt for the AI
-        const assignmentInfo = assignments.map(assignment => 
-            `Assignment ${assignment.id}: ${assignment.title} - ${assignment.description} (Start: ${new Date(assignment.start_time).toLocaleString()}, End: ${new Date(assignment.end_time).toLocaleString()})`
-        ).join("\n");
+        // Function to format the assignments
+    const formatAssignments = (assignments) => assignments.map(assignment => 
+        `Assignment ${assignment.id}: ${assignment.title} - ${assignment.description} (Start: ${new Date(assignment.start_time).toLocaleString()}, End: ${new Date(assignment.end_time).toLocaleString()})`
+    ).join("\n");
 
-        const prompt = `You are a helpful assistant. Here is the list of assignments:\n${assignmentInfo}\n\nUser: ${userMessage}\nAssistant:`;
+    // Function to format the courses
+    const formatCourses = (courses) => courses.map(course => 
+        `Course ${course.id}: ${course.title} - ${course.description} (Capacity: ${course.capacity}, Instructor: ${course.instructor.email})`
+    ).join("\n");
+
+    // Function to format the forum messages
+    const formatForumMessages = (forumMessages) => forumMessages.map(message => 
+        `Message ${message.id} in Forum ${message.forum}: ${message.header} - ${message.content} (Sent: ${new Date(message.created_time).toLocaleString()})`
+    ).join("\n");
+
+    // Preparing the prompt
+    const assignmentInfo = formatAssignments(generalData.assignments);
+    const courseInfo = formatCourses(generalData.courses);
+    const forumMessageInfo = formatForumMessages(generalData.forumMessages);
+
+    const prompt = `You are a helpful assistant. Here is the information you need:
+
+    Assignments:
+    ${assignmentInfo}
+
+    Courses:
+    ${courseInfo}
+
+    Forum Messages:
+    ${forumMessageInfo}
+
+    User: ${userMessage}
+    Assistant:`;
+
 
         // Send the user message and the assignment data to the Django backend for processing
         try {
@@ -76,6 +107,7 @@ const Chatbot = () => {
 
     return (
         <div className="chatbot-container">
+            {console.log(generalData)}
             <div className="chatbot-messages">
                 {messages.map((message, index) => (
                     <div key={index} className={`message ${message.sender}`}>
