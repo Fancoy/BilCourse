@@ -6,7 +6,7 @@ import ForumIcon from "@mui/icons-material/Forum";
 import BookmarkIcon from "@mui/icons-material/Bookmark";
 import HomeIcon from "@mui/icons-material/Home";
 import AddIcon from '@mui/icons-material/Add';
-import EventIcon from '@mui/icons-material/Event';
+import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import { useState, useEffect } from "react";
 import api from "../api";
@@ -37,6 +37,11 @@ function Sidebar() {
       <SideBarOption text="Profile" Icon={AccountCircleIcon} />
       <SideBarOption text="Messages" Icon={ForumIcon} />
       <SideBarOption text="Search" Icon={SearchIcon} />
+
+      {/* Student Options */}
+      {userRole === 'student' && (
+        <SideBarOption text="Chatbot" Icon={AutoAwesomeIcon} />
+      )}
 
       {/* Instructor Options */}
       {userRole === 'instructor' && (
