@@ -26,6 +26,7 @@ import AssignmentPage from "./components/AssignmentPage"
 import EditAssignmentPage from "./components/EditAssignmentPage"
 import SubmitAssignmentPage from "./components/SubmitAssignmentPage"
 import StudentAssignmentDetailsPage from "./components/StudentAssignmentDetailsPage"
+import ChatbotPage from "./pages/ChatbotPage";
 
 function Logout() {
   localStorage.clear();
@@ -127,6 +128,14 @@ function App() {
         <Route path="/student-assignments/:studentAssignmentId/details" element={<StudentAssignmentDetailsPage />} />
         
         <Route path="/verify-email" element={<VerifyEmail />} /> {/* Add the VerifyEmail route */}
+        <Route
+          path="/chatbot"
+          element={
+            <ProtectedRoute>
+              <ChatbotPage />
+            </ProtectedRoute>
+          }
+        />
       </Routes>
     </BrowserRouter>
   );

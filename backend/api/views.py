@@ -6,7 +6,7 @@ from django.shortcuts import get_object_or_404
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from . import models, serializers  # Ensure these are imported correctly
-from .serializers import UserSerializer, VerifyEmailSerializer
+from .serializers import UserSerializer, VerifyEmailSerializer, CourseSerializer, ActivitySerializer, ForumListSerializer, ForumMessageSerializer, AssignmentSerializer, StudentAssignmentSerializer
 from .models import User
 from rest_framework.permissions import AllowAny
 import logging
@@ -16,8 +16,97 @@ from django_filters.rest_framework import DjangoFilterBackend
 from .models import StudentAssignment
 from .serializers import StudentAssignmentSerializer
 from rest_framework.decorators import action
+
+import os
+import logging
+import openai
+import pandas as pd
+import matplotlib.pyplot as plt
+from django.http import JsonResponse
+from rest_framework.decorators import api_view
+from io import BytesIO
+import base64
 from django.http import HttpResponse
 from reportlab.pdfgen import canvas
+logger = logging.getLogger(__name__)
+
+openai.api_key = os.getenv("OPENAI_API_KEY")
+
+class UserCourseDetailView(APIView):
+
+    def get(self, request):
+        user = request.user
+        courses = models.Course.objects.filter(students = user)
+        activities = models.Activity.objects.filter(course__in=courses)
+        forums = models.Forum.objects.filter(course__in=courses)
+        forumMessages = models.ForumMessage.objects.filter(forum__in=forums)
+        assignments = models.Assignment.objects.filter(course__in=courses)
+        studentAssignments = StudentAssignment.objects.filter(assignment__in=assignments, student=user)
+
+        data = {
+            'courses': CourseSerializer(courses, many=True).data,
+            'activities': ActivitySerializer(activities, many=True).data,
+            'forums': ForumListSerializer(forums, many=True).data,
+            'forumMessages': ForumMessageSerializer(forumMessages, many=True).data,
+            'assignments': AssignmentSerializer(assignments, many=True).data,
+            'studentAssignments': StudentAssignmentSerializer(studentAssignments, many=True).data
+        }
+
+        return Response(data)
+    
+@api_view(['POST'])
+def chat_with_ai(request):
+    user_message = request.data.get('message', '')
+    if not user_message:
+        return JsonResponse({'error': 'No message provided'}, status=400)
+    
+    try:
+        logger.debug("Received message from user: %s", user_message)
+        
+        # Send the prompt to the OpenAI API
+        response = openai.ChatCompletion.create(
+            model="gpt-3.5-turbo",
+            messages=[
+                {"role": "system", "content": "You are a helpful assistant."},
+                {"role": "user", "content": user_message},
+            ],
+            max_tokens=150,
+            n=1,
+            temperature=0.7,
+        )
+        logger.debug("OpenAI response: %s", response)
+
+        ai_message = response['choices'][0]['message']['content'].strip()
+        
+        # Check if the AI response indicates a graph should be generated
+        if "graph" in user_message.lower():
+            # Example data
+            data = {
+                "Assignment": ["Assignment 1", "Assignment 2", "Assignment 3"],
+                "Score": [85, 90, 78]
+            }
+            df = pd.DataFrame(data)
+
+            plt.figure(figsize=(10, 6))
+            df.plot(kind='bar', x='Assignment', y='Score', legend=False)
+            plt.title("Assignment Scores")
+            plt.ylabel("Scores")
+
+            buffer = BytesIO()
+            plt.savefig(buffer, format='png')
+            buffer.seek(0)
+            image_png = buffer.getvalue()
+            buffer.close()
+
+            graph_data = base64.b64encode(image_png).decode('utf-8')
+
+            return JsonResponse({'message': ai_message, 'graph': graph_data})
+
+        return JsonResponse({'message': ai_message})
+    except Exception as e:
+        logger.error("Error during OpenAI API call: %s", e)
+        return JsonResponse({'error': str(e)}, status=500)
+
 
 def assignment_pdf_report(request, assignment_id):
     # Assuming you have an Assignment model with some fields
