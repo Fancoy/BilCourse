@@ -16,6 +16,43 @@ from django_filters.rest_framework import DjangoFilterBackend
 from .models import StudentAssignment
 from .serializers import StudentAssignmentSerializer
 from rest_framework.decorators import action
+from django.http import HttpResponse
+from reportlab.pdfgen import canvas
+
+def assignment_pdf_report(request, assignment_id):
+    # Assuming you have an Assignment model with some fields
+    from .models import Assignment
+    try:
+        assignment = Assignment.objects.get(id=assignment_id)
+    except Assignment.DoesNotExist:
+        return HttpResponse("Assignment not found", status=404)
+
+    # Create the HttpResponse object with the appropriate PDF headers.
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = f'attachment; filename="assignment_{assignment_id}_report.pdf"'
+
+    # Create the PDF object, using the response object as its "file."
+    p = canvas.Canvas(response)
+
+    # Draw things on the PDF. Here's where the PDF generation happens.
+    # Let's assume your assignment has 'title', 'description' and 'due_date'
+    p.drawString(100, 800, f"Title: {assignment.title}")
+    p.drawString(100, 780, f"Description: {assignment.description}")
+    p.drawString(100, 760, f"Due Date: {assignment.end_time.strftime('%Y-%m-%d')}")
+    p.drawString(100, 740, f"Course Name: {assignment.course.title}")
+    p.drawString(100, 680, f"Submitted Assignments:")
+    yaxis = 660
+    studentassignments = StudentAssignment.objects.filter(assignment=assignment)
+    for studentassignment in studentassignments:
+        yaxis -= 20
+        p.drawString(100, yaxis, f"Student: {studentassignment.student.email}")
+        p.drawString(100, yaxis - 20, f"Grade: {studentassignment.grade}")
+        p.drawString(100, yaxis - 40, f"Submission Time: {studentassignment.upload_time.strftime('%Y-%m-%d %H:%M:%S')}")
+
+    # Close the PDF object cleanly, and we're done.
+    p.showPage()
+    p.save()
+    return response
 
 def award_heavy_load_badge(user):
     courses_taken = models.Course.objects.filter(students=user).count()

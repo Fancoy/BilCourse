@@ -66,6 +66,10 @@ function AssignmentPage() {
 
     const displayedAssignments = isStudent ? studentAssignments.filter(sa => sa.student_email === user.user.email) : studentAssignments;
 
+    const navigateToExternalURL = () => {
+        window.location.href = `http://127.0.0.1:8000/assignments/${assignmentId}/pdf`;
+      };
+
     if (loading) return <div>Loading...</div>;
     if (error) return <div>Error: {error}</div>;
 
@@ -90,6 +94,7 @@ function AssignmentPage() {
                         <div> 
                             <button onClick={handleEdit}>Edit Assignment</button>
                             <button onClick={handleDelete}>Delete Assignment</button>
+                            <button onClick={navigateToExternalURL}>Assignment Report</button>
                         </div>
                     ) : (<div> </div>)}
                     
