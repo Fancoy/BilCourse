@@ -53,6 +53,10 @@ const Chatbot = () => {
         `Course ${course.id}: ${course.title} - ${course.description} (Capacity: ${course.capacity}, Instructor: ${course.instructor.email})`
     ).join("\n");
 
+    const formatStudentAssignments = (studentAssignments) => studentAssignments.map(studentAssignment =>
+        `Assignment ${studentAssignment.assignment}: ${studentAssignment.grade ? `Grade: ${studentAssignment.grade}` : 'Not graded'}`
+    ).join("\n");
+
     // Function to format the forum messages
     const formatForumMessages = (forumMessages) => forumMessages.map(message => 
         `Message ${message.id} in Forum ${message.forum}: ${message.header} - ${message.content} (Sent: ${new Date(message.created_time).toLocaleString()})`
@@ -62,7 +66,7 @@ const Chatbot = () => {
     const assignmentInfo = formatAssignments(generalData.assignments);
     const courseInfo = formatCourses(generalData.courses);
     const forumMessageInfo = formatForumMessages(generalData.forumMessages);
-
+    const studentAssignmentInfo = formatStudentAssignments(generalData.studentAssignments); 
     const prompt = `You are a helpful assistant. Here is the information you need:
 
     Assignments:
@@ -73,6 +77,9 @@ const Chatbot = () => {
 
     Forum Messages:
     ${forumMessageInfo}
+
+    Student Assignments:
+    ${studentAssignmentInfo}
 
     User: ${userMessage}
     Assistant:`;
