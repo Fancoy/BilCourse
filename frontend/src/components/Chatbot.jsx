@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import api from '../api';
 import './css/Chatbot.css';
 
@@ -9,6 +8,7 @@ const Chatbot = () => {
     const [assignments, setAssignments] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [graphData, setGraphData] = useState(null);
 
     useEffect(() => {
         const fetchAssignments = async () => {
@@ -51,10 +51,18 @@ const Chatbot = () => {
         try {
             const response = await api.post('/api/chat', { message: prompt });
             const botMessage = response.data.message;
+            const graphInfo = response.data.graph;
+
             setMessages([...messages, { sender: 'user', text: userMessage }, { sender: 'bot', text: botMessage }]);
+            if (graphInfo) {
+                setGraphData(`data:image/png;base64,${graphInfo}`);
+            } else {
+                setGraphData(null);
+            }
         } catch (error) {
             console.error('Error communicating with the backend:', error);
             setMessages([...messages, { sender: 'user', text: userMessage }, { sender: 'bot', text: 'Sorry, I couldn\'t process your request. Please try again later.' }]);
+            setGraphData(null);
         }
     };
 
@@ -92,8 +100,14 @@ const Chatbot = () => {
                     <li>What is assignment 4 about?</li>
                     <li>How can I download the assignment file for assignment 2?</li>
                     <li>Is there a solution key available for assignment 7?</li>
+                    <li>Show me a bar graph of assignment scores.</li>
                 </ul>
             </div>
+            {graphData && (
+                <div className="chatbot-graph">
+                    <img src={graphData} alt="Generated Graph" />
+                </div>
+            )}
         </div>
     );
 };

@@ -16,11 +16,15 @@ from django_filters.rest_framework import DjangoFilterBackend
 from .models import StudentAssignment
 from .serializers import StudentAssignmentSerializer
 from rest_framework.decorators import action
+import os
+import logging
+import openai
+import pandas as pd
+import matplotlib.pyplot as plt
 from django.http import JsonResponse
 from rest_framework.decorators import api_view
-import openai
-import os
-
+from io import BytesIO
+import base64
 logger = logging.getLogger(__name__)
 
 openai.api_key = os.getenv("OPENAI_API_KEY")
@@ -48,6 +52,31 @@ def chat_with_ai(request):
         logger.debug("OpenAI response: %s", response)
 
         ai_message = response['choices'][0]['message']['content'].strip()
+        
+        # Check if the AI response indicates a graph should be generated
+        if "graph" in user_message.lower():
+            # Example data
+            data = {
+                "Assignment": ["Assignment 1", "Assignment 2", "Assignment 3"],
+                "Score": [85, 90, 78]
+            }
+            df = pd.DataFrame(data)
+
+            plt.figure(figsize=(10, 6))
+            df.plot(kind='bar', x='Assignment', y='Score', legend=False)
+            plt.title("Assignment Scores")
+            plt.ylabel("Scores")
+
+            buffer = BytesIO()
+            plt.savefig(buffer, format='png')
+            buffer.seek(0)
+            image_png = buffer.getvalue()
+            buffer.close()
+
+            graph_data = base64.b64encode(image_png).decode('utf-8')
+
+            return JsonResponse({'message': ai_message, 'graph': graph_data})
+
         return JsonResponse({'message': ai_message})
     except Exception as e:
         logger.error("Error during OpenAI API call: %s", e)
