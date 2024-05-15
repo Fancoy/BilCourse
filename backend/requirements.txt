@@ -15,7 +15,3 @@ drf-spectacular
 django-environ
 daphne
 django-filter
-pandas
-pandasai
-matplotlib
-openai==0.28
