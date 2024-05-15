@@ -88,6 +88,7 @@ function StudentAssignmentDetailsPage() {
             console.error('Error updating file:', error.response ? error.response.data : error.message);
         } finally {
             setUploading(false);
+            window.location.reload();
         }
     };
 
