@@ -2,7 +2,7 @@ from django.conf import settings
 from django.contrib import admin
 from django.urls import include, path, re_path
 from django.views.generic import TemplateView
-from api.views import CreateUserView, UserAccountTypeView, UserProfileView, UserDetailView, SearchCourseView, SearchUserView, UserProfileCard,UserCourseDetailView
+from api.views import CreateUserView, UserAccountTypeView, UserProfileView, UserDetailView, SearchCourseView, SearchUserView, UserProfileCard,UserCourseDetailView, assignment_pdf_report
 from api.views_api.chat_views_api import CreatePrivateChatView, ListUserChatsView
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from drf_spectacular import views as spectacular_views
@@ -11,6 +11,7 @@ from api.views import chat_with_ai
 
 urlpatterns = [
     path('user/details/', UserCourseDetailView.as_view(), name='user-details'),
+    path('assignments/<int:assignment_id>/pdf/', assignment_pdf_report, name='assignment_pdf_report'),
     path('admin/', admin.site.urls),
     path("api/user/register/" , CreateUserView.as_view(), name="register"),
     path('api/user/account-type/', UserAccountTypeView.as_view(), name='user-account-type'),

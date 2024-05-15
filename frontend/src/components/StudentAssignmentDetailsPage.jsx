@@ -12,6 +12,8 @@ function StudentAssignmentDetailsPage() {
     const [user, setUser] = useState(null);
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [grade, setGrade] = useState('');
+    const [file, setFile] = useState(null);
+    const [uploading, setUploading] = useState(false);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -62,6 +64,34 @@ function StudentAssignmentDetailsPage() {
         }
     };
 
+    const handleFileChange = (e) => {
+        setFile(e.target.files[0]);
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        if (!file) return;
+
+        const formData = new FormData();
+        formData.append('feedback_file', file);
+
+        setUploading(true);
+
+        try {
+            const response = await api.patch(`/api/student-assignments/${studentAssignmentId}/add-feedback`, formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                }
+            });
+            console.log('File updated successfully:', response.data);
+        } catch (error) {
+            console.error('Error updating file:', error.response ? error.response.data : error.message);
+        } finally {
+            setUploading(false);
+            window.location.reload();
+        }
+    };
+
     const handleOpenEditModal = () => {
         setIsEditModalOpen(true);
     };
@@ -104,6 +134,7 @@ function StudentAssignmentDetailsPage() {
                 <div>
                     <h3>Submitted Assignment</h3>
                     <a href={studentAssignment.result_file} target="_blank" rel="noopener noreferrer">View Submitted File</a>
+                    <a href={studentAssignment.feedback_file} target="_blank" rel="noopener noreferrer">View Feedback File</a>
                     {submitter ? (
                         <>
                             <button onClick={handleOpenEditModal}>Edit Submission</button>
@@ -119,6 +150,10 @@ function StudentAssignmentDetailsPage() {
                         <div>
                             <input type="text" value={grade} onChange={handleGradeChange} placeholder="Enter grade" />
                             <button onClick={handleGradeSubmit}>Submit Grade</button>
+                            <form onSubmit={handleSubmit}>
+                                <input type="file" onChange={handleFileChange} />
+                                 <button type="submit" disabled={uploading}>{uploading ? 'Updating...' : 'Submit'}</button>
+                            </form>
                         </div>
                     )}
                 </div>
