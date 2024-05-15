@@ -25,65 +25,40 @@ from django.http import JsonResponse
 from rest_framework.decorators import api_view
 from io import BytesIO
 import base64
-from .serializers import UserSerializer, VerifyEmailSerializer, CourseSerializer, ActivitySerializer, ForumListSerializer, ForumMessageSerializer, AssignmentSerializer, StudentAssignmentSerializer
-
 logger = logging.getLogger(__name__)
+
 openai.api_key = os.getenv("OPENAI_API_KEY")
-
-class UserCourseDetailView(APIView):
-    permission_classes = [IsAuthenticated]
-
-    def get(self, request):
-        user = request.user
-        courses = models.Course.objects.filter(students=user)
-        activities = models.Activity.objects.filter(course__in=courses)
-        forums = models.Forum.objects.filter(course__in=courses)
-        forumMessages = models.ForumMessage.objects.filter(forum__in=forums)
-        assignments = models.Assignment.objects.filter(course__in=courses)
-        studentAssignments = models.StudentAssignment.objects.filter(assignment__in=assignments, student=user)
-
-        data = {
-            'courses': CourseSerializer(courses, many=True).data,
-            'activities': ActivitySerializer(activities, many=True).data,
-            'forums': ForumListSerializer(forums, many=True).data,
-            'forumMessages': ForumMessageSerializer(forumMessages, many=True).data,
-            'assignments': AssignmentSerializer(assignments, many=True).data,
-            'studentAssignments': StudentAssignmentSerializer(studentAssignments, many=True).data
-        }
-        return Response(data)
 
 @api_view(['POST'])
 def chat_with_ai(request):
     user_message = request.data.get('message', '')
     if not user_message:
         return JsonResponse({'error': 'No message provided'}, status=400)
-
-    # Fetch user-specific data
-    user = request.user
-    response_data = UserCourseDetailView().get(request).data
-
-    courses = response_data['courses']
-    activities = response_data['activities']
-    forums = response_data['forums']
-    forumMessages = response_data['forumMessages']
-    assignments = response_data['assignments']
-    studentAssignments = response_data['studentAssignments']
-
-    # Prepare the data for AI input
-    assignment_info = "\n".join([
-        f"Assignment {assignment['id']}: {assignment['title']} - {assignment['description']} (Start: {assignment['start_time']}, End: {assignment['end_time']})"
-        for assignment in assignments
-    ])
-
+    
     try:
         logger.debug("Received message from user: %s", user_message)
+        
+        # Send the prompt to the OpenAI API
+        response = openai.ChatCompletion.create(
+            model="gpt-3.5-turbo",
+            messages=[
+                {"role": "system", "content": "You are a helpful assistant."},
+                {"role": "user", "content": user_message},
+            ],
+            max_tokens=150,
+            n=1,
+            temperature=0.7,
+        )
+        logger.debug("OpenAI response: %s", response)
 
-        grades = [int(s) for s in user_message.split() if s.isdigit()]
-
-        if "graph" in user_message.lower() and grades:
+        ai_message = response['choices'][0]['message']['content'].strip()
+        
+        # Check if the AI response indicates a graph should be generated
+        if "graph" in user_message.lower():
+            # Example data
             data = {
-                "Assignment": [f"Assignment {i+1}" for i in range(len(grades))],
-                "Score": grades
+                "Assignment": ["Assignment 1", "Assignment 2", "Assignment 3"],
+                "Score": [85, 90, 78]
             }
             df = pd.DataFrame(data)
 
@@ -100,22 +75,8 @@ def chat_with_ai(request):
 
             graph_data = base64.b64encode(image_png).decode('utf-8')
 
-            return JsonResponse({'message': f"Graph for grades {grades} generated.", 'graph': graph_data})
+            return JsonResponse({'message': ai_message, 'graph': graph_data})
 
-        response = openai.ChatCompletion.create(
-            model="gpt-3.5-turbo",
-            messages=[
-                {"role": "system", "content": f"You are a helpful assistant. Here is the list of assignments:\n{assignment_info}"},
-                {"role": "user", "content": user_message},
-            ],
-            max_tokens=150,
-            n=1,
-            temperature=0.7,
-        )
-
-        logger.debug("OpenAI response: %s", response)
-
-        ai_message = response['choices'][0]['message']['content'].strip()
         return JsonResponse({'message': ai_message})
     except Exception as e:
         logger.error("Error during OpenAI API call: %s", e)
